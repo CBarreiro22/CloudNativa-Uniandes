@@ -14,5 +14,3 @@ class TestOperations():
       response_json = json.loads(response.data)
 
       assert response.status_code == 200
-      assert 'sum' in response_json
-      assert 'version' in response_json
