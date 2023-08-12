@@ -21,8 +21,6 @@ jobs:
     - name: Pruebas y coverage
       id: cubrimiento
       run: |
-        pipenv run coverage run -m pytest calculator/tests
-        pipenv run coverage report -m
         pipenv run pytest --cov=src -v -s --cov-fail-under=70
 
   automerge:
