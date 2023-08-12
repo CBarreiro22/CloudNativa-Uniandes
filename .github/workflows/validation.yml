@@ -25,15 +25,15 @@ jobs:
         pipenv run coverage report -m
 
   automerge:
-      name: Mezcla rama -> develop
+      name: Mezcla rama -> main
       needs: job1
       runs-on: ubuntu-latest
       if: contains(github.event.head_commit.message, 'merge')
       steps:
-        - name: Merge rama -> develop
+        - name: Merge rama -> main
           uses: tukasz/direct-merge-action@master
           with:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             source-branch: ${{ github.ref }}
-            target-branch: develop
+            target-branch: main
             commit-message: Se hace merge a la rama develop
