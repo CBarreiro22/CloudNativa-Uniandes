@@ -35,4 +35,4 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             source-branch: ${{ github.ref }}
             target-branch: main
-            commit-message: Se hace merge a la rama develop
+            commit-message: Se hace merge a la rama main
