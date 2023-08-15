@@ -1,6 +1,9 @@
+from . import db
 from flask import Flask, jsonify, request, Blueprint
-from ..commands.offers import Offers
+
 import os
+
+from ..commands.offers import Offers
 
 operations_blueprint = Blueprint('operations', __name__)
 
@@ -14,8 +17,8 @@ def addOffer():
     fragile = ['fragile']
     offer = ['offer']
     result = Offers(postId=postId,
-                    description=description,
-                    size=size,
-                    fragile=fragile,
-                    offer=offer).execute()
+                           description=description,
+                           size=size,
+                           fragile=fragile,
+                           offer=offer).execute()
     return jsonify(jsonify)

@@ -1,7 +1,7 @@
 from .base_command  import  BaseCommand
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from ..models.offer import Offer
+from ..models.model import Offer
 import logging
 
 Base = declarative_base()

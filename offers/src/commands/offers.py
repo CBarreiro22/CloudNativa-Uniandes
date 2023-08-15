@@ -3,12 +3,14 @@ from sqlalchemy.orm import sessionmaker
 import uuid
 import datetime
 import logging
-from offers.src.commands.base_command import BaseCommand
-from offers.src.models.offer import Offer, OfferJsonSchema
+
+from . import db
+from .base_command import BaseCommand
+from ..models.model import Offer, OfferJsonSchema
 
 
 class Offers(BaseCommand):
-    def __init__(self, db_url, postId,userId,description,size,fragile,offer):
+    def __init__(self, db, postId,userId,description,size,fragile,offer):
         # Crear la conexión a la base de datos
         self.postId = postId
         self.userId = userId
@@ -34,11 +36,10 @@ class Offers(BaseCommand):
                 offer = self.offer
             )
             # Crear una sesión para interactuar con la base de datos
-            Session = sessionmaker(bind=self.engine)
-            session = Session()
+
             # Agregar la nueva oferta a la sesión y confirmar la transacción para que se guarde en la base de datos
-            session.add(nueva_oferta)
-            session.commit()
+            db.session.add(nueva_oferta)
+            db.session.commit()
             logging.info("Oferta agregada exitosamente.")
             return nueva_oferta
         except Exception as e:
