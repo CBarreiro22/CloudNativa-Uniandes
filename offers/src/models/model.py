@@ -1,13 +1,15 @@
 import uuid, datetime
 from enum import Enum
 
+from flask_sqlalchemy.model import Model
 from marshmallow import Schema, fields
 from sqlalchemy import Column, String, Integer, DateTime, Boolean, UUID
-from .model  import  Model, Base
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
 
 
-
-class Offer(Model, Base):
+class Offer(Model):
     __tablename__ = 'offer'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
     postId = Column (String, PrimaryKey =True, doc="id de la publicación"),

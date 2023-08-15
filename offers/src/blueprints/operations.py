@@ -1,4 +1,4 @@
-from . import db
+
 from flask import Flask, jsonify, request, Blueprint
 
 import os
