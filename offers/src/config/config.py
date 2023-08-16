@@ -1,17 +1,18 @@
+from dotenv import load_dotenv
 import logging
 import os
 class Config(object):
-    DEBUG = False
-    TESTING = False
-    DB_USER = os.getenv('DB_USER')
-    DB_PASSWORD = os.getenv('DB_PASSWORD')
-    DB_HOST = os.getenv('DB_HOST')
-    DB_PORT = os.getenv('DB_PORT')
-    DB_NAME = os.getenv('DB_NAME')
-    SQLALCHEMY_DATABASE_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    logging.info("varialbes cargadas")
-    logging.debug(f'SQLALCHEMY_DATABASE_URI: {SQLALCHEMY_DATABASE_URI}')
+    def __init__(self, env_file=".env"):
+        self.env_file = env_file
+        logging.info("loading env")
+        self.load_env()
+
+    def load_env(self):
+        if os.path.exists(self.env_file):
+            load_dotenv(self.env_file)
+
+    def get(self, key, default=None):
+        return os.getenv(key, default)
 
 class ProductionConfig(Config):
     DEBUG = False

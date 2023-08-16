@@ -2,10 +2,9 @@ import os,logging
 
 from dotenv import load_dotenv
 
-from .commands import db
 from .config import config
-
-loaded = load_dotenv('.env.development')
+from .config.config import Config
+from .models.model import db
 
 from flask import Flask, jsonify
 from .blueprints.operations import operations_blueprint
@@ -31,11 +30,26 @@ logging.getLogger('').addHandler(console_handler)
 
 app: Flask = Flask(__name__)
 app.register_blueprint(operations_blueprint)
+loaded = load_dotenv('.env.development')
+
 app.config.from_object(os.getenv('APP_SETTINGS'))
-app.config['SQLALCHEMY_DATABASE_URI'] = config.Config.SQLALCHEMY_DATABASE_URI
+
+
+env_config = Config()
+
+db_user = env_config.get("DB_USER")
+db_password = env_config.get("DB_PASSWORD")
+db_host = env_config.get("DB_HOST")
+db_port = env_config.get("DB_PORT")
+db_name = env_config.get("DB_NAME")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 app.url_map.strict_slashes = False
 
-db.init_app()
+app_context = app.app_context()
+app_context.push()
+
+db.init_app(app)
 db.create_all()
 
 @app.errorhandler(ApiError)

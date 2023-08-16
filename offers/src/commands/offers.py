@@ -1,17 +1,11 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-import uuid
-import datetime
 import logging
-
-from sqlalchemy.testing.config import db_url
 
 from .base_command import BaseCommand
 from ..models.model import db, Offer, OfferJsonSchema
 
 
 class Offers(BaseCommand):
-    def __init__(self, db_url, postId, userId, description, size, fragile, offer):
+    def __init__(self, postId, userId, description, size, fragile, offer):
         # Crear la conexión a la base de datos
         self.postId = postId
         self.userId = userId
@@ -42,4 +36,4 @@ class Offers(BaseCommand):
 
     def execute(self):
         nueva_offerta = self.add_offer()
-        return OfferJsonSchema().dump(nueva_offerta)
+        return nueva_offerta
