@@ -21,9 +21,9 @@ class Users(db.Model):
     salt = db.Column(db.String(128), nullable=False)
     token = db.Column(db.String(128), nullable=True)
     status = db.Column(db.String(128), default="POR_VERIFICAR")
-    expire_at = db.Column(DateTime, default=datetime.datetime.utcnow)
-    created_at = db.Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = db.Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    expireAt = db.Column(DateTime, default=datetime.datetime.utcnow)
+    createdAt = db.Column(DateTime, default=datetime.datetime.utcnow)
+    updateAt = db.Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     __table_args__ = (
         CheckConstraint(status.in_(STATUS_CHOICES), name='valid_status'),

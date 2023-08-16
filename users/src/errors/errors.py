@@ -5,3 +5,4 @@ class ApiError(Exception):
 class CantDivideByZero(ApiError):
     code = 400
     description = "Cant divide by zero"
+
