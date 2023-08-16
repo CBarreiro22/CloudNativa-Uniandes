@@ -1,29 +1,17 @@
 import os
+
+from flask_sqlalchemy import SQLAlchemy
+
 from .blueprints.user import users_blueprint
 from dotenv import load_dotenv
 from flask import Flask, jsonify
-
 from .errors.errors import ApiError
-from .models.model import db
 
-loaded = load_dotenv('.env.development')
-
-db_host = os.getenv('DB_HOST')
-db_port = os.getenv('DB_PORT')
-db_name = os.getenv('DB_NAME')
-db_user = os.getenv('DB_USER')
-db_password = os.getenv('DB_PASSWORD')
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 app.register_blueprint(users_blueprint)
-db.init_app(app)
-try:
-    db.create_all()
-except Exception as e:
-    print("Error creating tables:", str(e))
+loaded = load_dotenv('.env.development')
+
 
 
 @app.errorhandler(ApiError)
