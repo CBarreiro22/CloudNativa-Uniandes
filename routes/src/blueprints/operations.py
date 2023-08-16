@@ -25,7 +25,6 @@ def create_route():
     if not is_valid_token(token):
         return '', 401    
     json = request.get_json()
-    print(json)
     flight_id=json.get('flightId')
     source_airport_code= json.get('sourceAirportCode')
     source_country=json.get('sourceCountry')
@@ -62,9 +61,9 @@ def get_routes():
     args = request.args
     flight = args.get('flight') or None
     if flight is not None:
-        result = route_schema.dump(Route.query.filter(Route.flightId == flight).first())
+        result = [route_schema.dump(r) for r in Route.query.filter(Route.flightId == flight)]
     else:
-        result = [route_schema.dump(tarea) for tarea in Route.query.all()]
+        result = [route_schema.dump(r) for r in Route.query.all()]
     return jsonify(result), 200
 
 #3. Consultar un trayecto
@@ -136,15 +135,7 @@ def is_valid_uuid(value):
         return False
 
 def is_valid_date_route(start_date, end_date):
-    print('*date1',start_date)
-    print('*date1',end_date)
-    print('*now', datetime.now().isoformat())
     try:
-        #date1=datetime.fromisoformat(start_date)
-        #date2=datetime.fromisoformat(end_date)
-        print('date1',start_date)
-        print('date1',end_date)
-        print('now', datetime.now())
         if start_date< datetime.now().isoformat() or start_date>end_date:
             return False
         return True
