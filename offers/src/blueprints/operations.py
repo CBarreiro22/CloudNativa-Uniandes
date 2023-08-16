@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request, Blueprint
 
 import os
 
+from ..commands import db
 from ..commands.offers import Offers
 
 operations_blueprint = Blueprint('operations', __name__)

@@ -1,3 +1,4 @@
+import logging
 import os
 class Config(object):
     DEBUG = False
@@ -9,6 +10,8 @@ class Config(object):
     DB_NAME = os.getenv('DB_NAME')
     SQLALCHEMY_DATABASE_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    logging.info("varialbes cargadas")
+    logging.debug(f'SQLALCHEMY_DATABASE_URI: {SQLALCHEMY_DATABASE_URI}')
 
 class ProductionConfig(Config):
     DEBUG = False

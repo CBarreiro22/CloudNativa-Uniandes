@@ -4,13 +4,14 @@ import uuid
 import datetime
 import logging
 
-from . import db
+from sqlalchemy.testing.config import db_url
+
 from .base_command import BaseCommand
-from ..models.model import Offer, OfferJsonSchema
+from ..models.model import db, Offer, OfferJsonSchema
 
 
 class Offers(BaseCommand):
-    def __init__(self, db, postId,userId,description,size,fragile,offer):
+    def __init__(self, db_url, postId, userId, description, size, fragile, offer):
         # Crear la conexión a la base de datos
         self.postId = postId
         self.userId = userId
@@ -18,22 +19,16 @@ class Offers(BaseCommand):
         self.size = size
         self.fragile = fragile
         self.offer = offer
-
-
-        self.engine = create_engine(db_url)
-        # Crear las tablas en la base de datos si no existen
-        Offer.__table__.create(self.engine, checkfirst=True)
-
     def add_offer(self):
         try:
             # Crear una instancia de la clase Offer
             nueva_oferta = Offer(
-                postId = self.postId,
-                userId = self.userId,
-                description = self.description,
-                size = self.size,
-                fragile = self.fragile,
-                offer = self.offer
+                postId=self.postId,
+                userId=self.userId,
+                description=self.description,
+                size=self.size,
+                fragile=self.fragile,
+                offer=self.offer
             )
             # Crear una sesión para interactuar con la base de datos
 
@@ -46,5 +41,5 @@ class Offers(BaseCommand):
             logging.error("Error al agregar la oferta:", str(e))
 
     def execute(self):
-        nueva_offerta = self.add_offer ()
+        nueva_offerta = self.add_offer()
         return OfferJsonSchema().dump(nueva_offerta)
