@@ -1,8 +1,20 @@
 class ApiError(Exception):
-    code = 422
+    code = 401
     description = "Default message"
 
 
-class CantDivideByZero(ApiError):
+class TokenNotValid(ApiError):
+    code = 401
+
+
+class EmptyToken(ApiError):
+    code = 403
+
+
+class InvalidBody(ApiError):
     code = 400
-    description = "Cant divide by zero"
+
+
+class InvalidExpirationDate(ApiError):
+    code = 412
+    description = "La fecha expiración no es válida"

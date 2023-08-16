@@ -1,11 +1,12 @@
+from __future__ import absolute_import
 from dotenv import load_dotenv
+from flask import Flask, jsonify
+
+from src.blueprints.operations import operations_blueprint
+from src.errors.errors import ApiError
+import os
 
 loaded = load_dotenv('.env.development')
-
-from flask import Flask, jsonify
-from .blueprints.operations import operations_blueprint
-from .errors.errors import ApiError
-import os
 
 app = Flask(__name__)
 app.register_blueprint(operations_blueprint)
