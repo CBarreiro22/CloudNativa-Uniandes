@@ -1,5 +1,4 @@
 import hashlib
-import json
 
 from flask import jsonify, request, Blueprint
 from datetime import datetime, timedelta
@@ -45,11 +44,7 @@ def create_user():
     db_session.commit()
 
     user = db_session.query(Users).filter_by(username=username).first()
-    if user is not None:
-        user.status = "VERIFICADO"
-    else:
-        user.status = "NO_VERIFICADO"
-    db_session.commit()
+
 
     response = {
         "id": str(user.id),
@@ -80,6 +75,7 @@ def update_user(user_id):
         user.phone_number = data["phoneNumber"]
 
     db_session.commit()
+    db_session.close()
 
     return jsonify({"msg": "El usuario ha sido actualizado"}), 200
 
@@ -100,13 +96,49 @@ def generate_token():
 
     # Calcular la fecha de vencimiento del token (por ejemplo, 1 hora después de la generación)
     expire_at = datetime.utcnow() + timedelta(hours=1)
-
+    user.expireAt = expire_at
+    user.token = token
+    if user.token is not None:
+        user.status = "VERIFICADO"
+    else:
+        user.status = "POR_VERIFICAR"
+    db_session.commit()
     # Puedes almacenar este token y su fecha de vencimiento en la base de datos si lo deseas
 
     response = {
         "id": str(user.id),
         "token": token,
         "expireAt": expire_at.isoformat()
+    }
+    db_session.close()
+
+    return jsonify(response), 200
+
+
+# Ruta para consultar información del usuario
+@users_blueprint.route('/users/me', methods=['GET'])
+def get_user_info():
+    # Obtener el token del encabezado Authorization
+    token = request.headers.get('Authorization')
+
+    if not token or not token.startswith('Bearer '):
+        return jsonify({"error": "Token no válido"}), 403
+
+    token = token.split(' ')[1]
+
+    user = db_session.query(Users).filter_by(token=token).first()
+    print(user.expireAt)
+    if not user or user.expireAt < datetime.utcnow():
+        return jsonify({"error": "Token inválido o vencido"}), 401
+
+    response = {
+        "id": str(user.id),
+        "username": user.username,
+        "email": user.email,
+        "fullName": user.full_name,
+        "dni": user.dni,
+        "phoneNumber": user.phone_number,
+        "status": user.status
     }
 
     return jsonify(response), 200
