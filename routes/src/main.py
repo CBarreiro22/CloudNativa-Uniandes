@@ -12,8 +12,10 @@ app.register_blueprint(operations_blueprint)
 
 @app.errorhandler(ApiError)
 def handle_exception(err):
+    if err.description == '':
+        return err.description, err.code
     response = {
-      "mssg": err.description,
-      "version": os.environ["VERSION"]
+        "mssg": err.description,
+        "version": os.environ["VERSION"]
     }
     return jsonify(response), err.code

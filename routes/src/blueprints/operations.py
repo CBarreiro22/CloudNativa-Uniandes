@@ -4,6 +4,8 @@ import uuid
 import datetime
 from datetime import datetime
 from dotenv import load_dotenv
+from src.errors.errors import InvalidToken
+from src.errors.errors import MissingToken
 from src.models.route import RouteJsonSchema
 from src.models.route import Route
 from flask import Flask, Blueprint, request, jsonify
@@ -19,11 +21,7 @@ route_schema = RouteJsonSchema()
 #1. Creación de trayecto
 @operations_blueprint.route('/routes', methods=['POST'])
 def create_route():
-    token= get_token(request)
-    if token is None:
-        return '', 403
-    if not is_valid_token(token):
-        return '', 401    
+    get_token(request)   
     json = request.get_json()
     flight_id=json.get('flightId')
     source_airport_code= json.get('sourceAirportCode')
@@ -52,11 +50,7 @@ def create_route():
 #2. Ver y filtrar trayectos
 @operations_blueprint.route('/routes', methods=['GET'])
 def get_routes():
-    token= get_token(request)
-    if token is None:
-        return '', 403
-    if not is_valid_token(token):
-        return '', 401
+    get_token(request)
     #Retornar 400 en caso de que alguno de los campos de busqudedano tenga el formato especificado
     args = request.args
     flight = args.get('flight') or None
@@ -69,11 +63,7 @@ def get_routes():
 #3. Consultar un trayecto
 @operations_blueprint.route('/routes/<string:id>', methods=['GET'])
 def get_route(id):
-    token= get_token(request)
-    if token is None:
-        return '', 403
-    if not is_valid_token(token):
-        return '', 401
+    get_token(request)
     if not is_valid_uuid(id):
         return '', 400
     result=Route.query.filter(Route.id == id).first()
@@ -84,11 +74,7 @@ def get_route(id):
 #4. Eliminar trayecto
 @operations_blueprint.route('/routes/<string:id>', methods=['DELETE'])
 def delete_route(id):
-    token= get_token(request)
-    if token is None:
-        return '', 403
-    if not is_valid_token(token):
-        return '', 401
+    get_token(request)
     if not is_valid_uuid(id):
         return '', 400
     result = Route.query.filter(Route.id == id).first() 
@@ -113,10 +99,14 @@ def reset_database():
         "msg": "Todos los datos fueron eliminados"
     }), 200
 
-
 def get_token(value):
     try:
-        return value.headers.get('Authorization') 
+        token= value.headers.get('Authorization') 
+        if token is None:
+            raise MissingToken
+        if not is_valid_token(token):
+            raise InvalidToken
+        return token
     except ValueError:
         return None
 
