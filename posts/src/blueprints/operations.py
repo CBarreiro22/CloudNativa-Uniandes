@@ -1,17 +1,17 @@
 import datetime
 from datetime import datetime
 from functools import wraps
-
 from flask import Blueprint, request, jsonify
-
-from src.models.post import Post
+from src.models.model import db_session, init_db
+from src.models.post import Post, PostJsonSchema
 
 operations_blueprint = Blueprint('operations', __name__)
 
+init_db()
+post_schema = PostJsonSchema()
 
 def is_invalid_iso8601_or_past(date_string):
     try:
-        # expire_at_datetime = datetime.fromisoformat(date_string)
         current_datetime = datetime.now()
         return date_string <= current_datetime.isoformat()
     except ValueError:
@@ -22,12 +22,14 @@ def validate_request_body(func):
     @wraps(func)
     def decorated(*args, **kwargs):
         json_data = request.get_json()
-        if not json_data:
-            return '', 400
+        required_fields = ['routeId', 'expireAt']
+        for field in required_fields:
+            if field not in json_data or json_data[field] is None:
+                return '', 400
 
         expireAt = json_data.get("expireAt")
         if is_invalid_iso8601_or_past(expireAt):
-            return '', 412
+            return 'La fecha expiración no es válida', 412
 
         return func(*args, **kwargs)
 
@@ -54,7 +56,6 @@ def require_token(func):
 
     return decorated
 
-
 @operations_blueprint.route('/posts', methods=['POST'])
 @require_token
 @validate_request_body
@@ -66,13 +67,16 @@ def divide():
 
     # Gaurdar objeto en DBA
 
-    post_entity = Post("expireAt", user_id, json.get("expireAt"))
+    post_entity = Post(json.get("routeId"), user_id, json.get("expireAt"))
+    db_session.add(post_entity)
+    db_session.commit()
 
     # Crear el JSON de respuesta
+
     response_data = {
-        "id": "post_id",
-        "userId": user_id,  # Obtener el user_id del contexto del request
-        "createdAt": datetime.now().isoformat()  # Convertir la fecha y hora a formato ISO 8601
+        "id": post_entity.id,
+        "userId": user_id,
+        "createdAt": post_entity.createdAt
     }
 
-    return jsonify(response_data), 200
+    return jsonify(response_data), 201
