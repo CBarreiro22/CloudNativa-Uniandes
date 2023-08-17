@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from datetime import datetime
 from functools import wraps
 from flask import Blueprint, request, jsonify
@@ -9,6 +10,7 @@ operations_blueprint = Blueprint('operations', __name__)
 
 init_db()
 post_schema = PostJsonSchema()
+
 
 def is_invalid_iso8601_or_past(date_string):
     try:
@@ -56,6 +58,7 @@ def require_token(func):
 
     return decorated
 
+
 @operations_blueprint.route('/posts', methods=['POST'])
 @require_token
 @validate_request_body
@@ -80,3 +83,37 @@ def divide():
     }
 
     return jsonify(response_data), 201
+
+
+# Decoradora para validar el formato del UUID en el path
+def validate_uuid_parameter(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        id_value = kwargs.get('id')
+        if id_value is None:
+            return '', 400
+
+        try:
+            uuid.UUID(id_value)
+        except ValueError:
+            return '', 400
+
+        return func(*args, **kwargs)
+
+    return decorated
+
+
+# Ruta para eliminar un post
+@operations_blueprint.route('/posts/<string:id>', methods=['DELETE'])
+@require_token
+@validate_uuid_parameter
+def delete_post(id):
+    result_post = Post.query.filter(Post.id == id).first()
+    if result_post is None:
+        return '', 400
+    db_session.delete(result_post)
+    db_session.commit()
+
+    return jsonify({
+        "msg": "La publicación fue eliminada"
+    }), 200
