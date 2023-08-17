@@ -11,8 +11,8 @@ db = SQLAlchemy()
 class Offer(db.Model):
     __tablename__ = 'offer'
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    postId = db.Column (String, primary_key =True, doc="id de la publicación")
-    userId = db.Column(String, doc="identificador del usuario que realizó la oferta")
+    post_id = db.Column (String, primary_key =True, doc="id de la publicación")
+    user_id = db.Column(String, doc="identificador del usuario que realizó la oferta")
     description = db.Column(String(length=140), doc="descripción de no más de 140 caracteres sobre el paquete a llevar.")
     size = db.Column(Enum('LARGE', 'MEDIO', 'SMALL', name='size_enum'),
                 doc="un valor que describe subjetivamente del tamaño del paquete, puede ser LARGE,MEDIUM,SMALL")

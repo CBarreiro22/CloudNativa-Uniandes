@@ -1,21 +1,12 @@
-import os,logging
+import os
 
-from dotenv import load_dotenv
-
-from .config import config
 from .config.config import Config
 from .models.model import db
 
+import logging
 from flask import Flask, jsonify
 from .blueprints.operations import operations_blueprint
 from .errors.errors import ApiError
-
-
-# Configure the root logger
-logging.basicConfig(level=logging.DEBUG,  # Set the minimum log level
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    filename='app.log',  # Log to a file
-                    filemode='w')
 
 # Create a console handler and set the level to DEBUG
 console_handler = logging.StreamHandler()
@@ -27,15 +18,13 @@ console_handler.setFormatter(formatter)
 
 # Add the console handler to the root logger
 logging.getLogger('').addHandler(console_handler)
-
 app: Flask = Flask(__name__)
 app.register_blueprint(operations_blueprint)
-loaded = load_dotenv('.env.development')
 
 app.config.from_object(os.getenv('APP_SETTINGS'))
 
 
-env_config = Config()
+env_config = Config('.env.development')
 
 db_user = env_config.get("DB_USER")
 db_password = env_config.get("DB_PASSWORD")

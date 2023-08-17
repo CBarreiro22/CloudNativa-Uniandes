@@ -26,3 +26,5 @@ Werkzeug==2.3.6
 zipp==3.16.2
 
 python-dotenv~=1.0.0
+requests~=2.31.0
+jsonschema~=4.19.0

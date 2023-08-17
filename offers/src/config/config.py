@@ -2,14 +2,21 @@ from dotenv import load_dotenv
 import logging
 import os
 class Config(object):
-    def __init__(self, env_file=".env"):
+    def __init__(self, env_file):
         self.env_file = env_file
         logging.info("loading env")
         self.load_env()
+        # Configure the root logger
+        logging.basicConfig(level=logging.DEBUG,  # Set the minimum log level
+                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                            filename='app.log',  # Log to a file
+                            filemode='w')
+
+
 
     def load_env(self):
         if os.path.exists(self.env_file):
-            load_dotenv(self.env_file)
+            load_dotenv(dotenv_path=self.env_file)
 
     def get(self, key, default=None):
         return os.getenv(key, default)
