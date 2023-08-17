@@ -4,7 +4,7 @@ from functools import wraps
 
 from flask import Blueprint, request, jsonify
 
-from posts.src.models.post import Post
+from src.models.post import Post
 
 operations_blueprint = Blueprint('operations', __name__)
 
@@ -66,7 +66,7 @@ def divide():
 
     # Gaurdar objeto en DBA
 
-    post_entity = Post(flight_id, user_id, json.get("expireAt"))
+    post_entity = Post("expireAt", user_id, json.get("expireAt"))
 
     # Crear el JSON de respuesta
     response_data = {

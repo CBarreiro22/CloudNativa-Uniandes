@@ -3,7 +3,7 @@ from datetime import datetime
 from marshmallow import Schema, fields
 from sqlalchemy import Column, String, DateTime
 
-from models.model import Model, Base
+from src.models.model import Model, Base
 
 
 class Post(Model, Base):
