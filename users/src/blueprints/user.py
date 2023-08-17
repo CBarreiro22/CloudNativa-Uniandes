@@ -40,23 +40,26 @@ def create_user():
         dni=dni,
         full_name=fullname
     )
-    db_session.add(nuevo_usuario)
-    db_session.commit()
+    try:
+        db_session.add(nuevo_usuario)
+        db_session.commit()
 
-    user = db_session.query(Users).filter_by(username=username).first()
+        user = db_session.query(Users).filter_by(username=username).first()
+
+        response = {
+            "id": str(user.id),
+            "createdAt": user.createdAt.isoformat()
+        }
+
+        db_session.close()
+
+        return jsonify(response), 200
+    except:
+        db_session.rollback()
+        return jsonify({"error": "El usuario ya existe"}), 409
 
 
-    response = {
-        "id": str(user.id),
-        "createdAt": user.createdAt.isoformat()
-    }
-
-    db_session.close()
-
-    return jsonify(response), 200
-
-
-@users_blueprint.route('/users/<int:user_id>', methods=['PATCH'])
+@users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
 def update_user(user_id):
     user = db_session.query(Users).get(user_id)
 
@@ -64,6 +67,15 @@ def update_user(user_id):
         return jsonify({"error": "Usuario no encontrado"}), 404
 
     data = request.json
+
+    if not data:
+        return jsonify({"error": "La petición no contiene campos para actualizar"}), 400
+
+    valid_fields = ["status", "dni", "fullName", "phoneNumber"]
+    invalid_fields = [field for field in data if field not in valid_fields]
+
+    if invalid_fields:
+        return jsonify({"error": f"Campos inválidos: {', '.join(invalid_fields)}"}), 400
 
     if "status" in data:
         user.status = data["status"]
@@ -83,12 +95,22 @@ def update_user(user_id):
 @users_blueprint.route('/users/auth', methods=['POST'])
 def generate_token():
     data = request.json
+
+    # Verificar si faltan campos en los datos JSON
+    if "username" not in data or "password" not in data:
+        return jsonify({"error": "Campos faltantes en los datos"}), 400
+
     username = data.get("username")
     password = data.get("password")
 
     user = db_session.query(Users).filter_by(username=username).first()
 
-    if not user or user.password != password:
+    # Manejar el caso cuando el usuario no existe
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    # Verificar la contraseña del usuario
+    if user.password != password:
         return jsonify({"error": "Credenciales inválidas"}), 401
 
     # Generar un nuevo UUID como token
@@ -103,7 +125,6 @@ def generate_token():
     else:
         user.status = "POR_VERIFICAR"
     db_session.commit()
-    # Puedes almacenar este token y su fecha de vencimiento en la base de datos si lo deseas
 
     response = {
         "id": str(user.id),
@@ -122,12 +143,11 @@ def get_user_info():
     token = request.headers.get('Authorization')
 
     if not token or not token.startswith('Bearer '):
-        return jsonify({"error": "Token no válido"}), 403
+        return jsonify({"error": "El token no está en el encabezado de la solicitud"}), 403
 
     token = token.split(' ')[1]
 
     user = db_session.query(Users).filter_by(token=token).first()
-    print(user.expireAt)
     if not user or user.expireAt < datetime.utcnow():
         return jsonify({"error": "Token inválido o vencido"}), 401
 
@@ -142,3 +162,20 @@ def get_user_info():
     }
 
     return jsonify(response), 200
+
+
+@users_blueprint.route('/users/ping', methods=['GET'])
+def health_check():
+    return "pong", 200
+
+
+@users_blueprint.route('/users/reset', methods=['POST'])
+def reset_database():
+    # Eliminar todos los registros de la tabla Users
+    db_session.query(Users).delete()
+
+    # Realizar commit y cerrar la sesión
+    db_session.commit()
+    db_session.close()
+
+    return jsonify({"msg": "Todos los datos fueron eliminados"}), 200
