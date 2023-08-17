@@ -56,7 +56,7 @@ def create_user():
         return jsonify(response), 200
     except:
         db_session.rollback()
-        return jsonify({"error": "El usuario ya existe"}), 409
+        return jsonify({"error": "El usuario ya existe"}), 412
 
 
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
