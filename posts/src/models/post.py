@@ -22,6 +22,7 @@ class Post(Model, Base):
 
 class PostJsonSchema(Schema):
     id = fields.String()
+    routeId = fields.String()
     userId = fields.String()
     expireAt = fields.DateTime()
     createdAt = fields.DateTime()

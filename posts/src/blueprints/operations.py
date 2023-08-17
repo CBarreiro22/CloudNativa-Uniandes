@@ -1,8 +1,10 @@
 import datetime
 import uuid
-from datetime import datetime
 from functools import wraps
-from flask import Blueprint, request, jsonify
+
+from flask import Blueprint, jsonify
+from flask import request
+
 from src.models.model import db_session, init_db
 from src.models.post import Post, PostJsonSchema
 
@@ -11,13 +13,18 @@ operations_blueprint = Blueprint('operations', __name__)
 init_db()
 post_schema = PostJsonSchema()
 
+from datetime import datetime
 
-def is_invalid_iso8601_or_past(date_string):
-    try:
-        current_datetime = datetime.now()
-        return date_string <= current_datetime.isoformat()
-    except ValueError:
-        return True
+
+def is_invalid_iso8601_or_past(date):
+    if isinstance(date, str):
+        try:
+            date = datetime.fromisoformat(date)
+        except ValueError:
+            return True
+
+    current_datetime = datetime.now()
+    return date <= current_datetime
 
 
 def validate_request_body(func):
@@ -64,28 +71,18 @@ def require_token(func):
 @validate_request_body
 def divide():
     json = request.get_json()
-
-    # Acceder al user_id guardado en el contexto del request
     user_id = request.user_id
-
-    # Gaurdar objeto en DBA
-
     post_entity = Post(json.get("routeId"), user_id, json.get("expireAt"))
     db_session.add(post_entity)
     db_session.commit()
-
-    # Crear el JSON de respuesta
 
     response_data = {
         "id": post_entity.id,
         "userId": user_id,
         "createdAt": post_entity.createdAt
     }
-
     return jsonify(response_data), 201
 
-
-# Decoradora para validar el formato del UUID en el path
 def validate_uuid_parameter(func):
     @wraps(func)
     def decorated(*args, **kwargs):
@@ -102,8 +99,6 @@ def validate_uuid_parameter(func):
 
     return decorated
 
-
-# Ruta para eliminar un post
 @operations_blueprint.route('/posts/<string:id>', methods=['DELETE'])
 @require_token
 @validate_uuid_parameter
@@ -118,11 +113,57 @@ def delete_post(id):
         "msg": "La publicación fue eliminada"
     }), 200
 
+
 @operations_blueprint.route('/posts/<string:id>', methods=['GET'])
 @require_token
 @validate_uuid_parameter
-def get_route(id):
+def get_post(id):
     result_post = Post.query.filter(Post.id == id).first()
     if result_post is None:
         return '', 404
     return jsonify(post_schema.dump(result_post)), 200
+
+
+
+
+
+def validate_posts_parameter(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        expire = request.args.get('expire')
+        if expire is not None and expire not in ["true", "false"]:
+            return '', 400
+        return func(*args, **kwargs)
+
+    return decorated
+
+
+@operations_blueprint.route('/posts', methods=['GET'])
+@require_token
+@validate_posts_parameter
+def get_posts():
+    args = request.args
+    route = args.get('route') or None
+    owner = args.get('owner') or None
+    expire = args.get('expire') or None
+    if expire is None and route is None and owner is None:
+        result = [post_schema.dump(p) for p in Post.query.all()]
+    else:
+        result = [
+            post_schema.dump(p) for p in Post.query.all() if
+            (
+                (expire is None or (expire.lower() == "true" and is_invalid_iso8601_or_past(p.expireAt))
+                 or
+                 (expire.lower() == "false" and not is_invalid_iso8601_or_past(p.expireAt))
+                 )
+            ) and
+            (
+                (route is None or p.routeId == route)
+            ) and
+            (
+                    (owner is None) or
+                    (owner == 'me' and p.userId == request.user_id) or
+                    (owner != 'me' and p.userId == owner)
+            )
+        ]
+    return jsonify(result), 200
