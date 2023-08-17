@@ -117,3 +117,12 @@ def delete_post(id):
     return jsonify({
         "msg": "La publicación fue eliminada"
     }), 200
+
+@operations_blueprint.route('/posts/<string:id>', methods=['GET'])
+@require_token
+@validate_uuid_parameter
+def get_route(id):
+    result_post = Post.query.filter(Post.id == id).first()
+    if result_post is None:
+        return '', 404
+    return jsonify(post_schema.dump(result_post)), 200
