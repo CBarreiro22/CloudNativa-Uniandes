@@ -5,7 +5,7 @@ from functools import wraps
 from flask import Blueprint, jsonify
 from flask import request
 
-from src.models.model import db_session, init_db
+from src.models.model import db_session, init_db, reset_db
 from src.models.post import Post, PostJsonSchema
 
 operations_blueprint = Blueprint('operations', __name__)
@@ -167,3 +167,15 @@ def get_posts():
             )
         ]
     return jsonify(result), 200
+
+
+@operations_blueprint.route('/posts/reset', methods=['POST'])
+def reset_database():
+    reset_db()
+    return jsonify({
+        "msg": "Todos los datos fueron eliminados"
+    }), 200
+
+@operations_blueprint.route('/posts/ping', methods=['GET'])
+def check_health():
+    return 'pong', 200
