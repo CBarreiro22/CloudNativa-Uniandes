@@ -11,8 +11,8 @@ db = SQLAlchemy()
 class Offer(db.Model):
     __tablename__ = 'offer'
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    post_id = db.Column (String, primary_key =True, doc="id de la publicación")
-    user_id = db.Column(String, doc="identificador del usuario que realizó la oferta")
+    postId = db.Column (String, primary_key =True, doc="id de la publicación")
+    userId = db.Column(String, doc="identificador del usuario que realizó la oferta")
     description = db.Column(String(length=140), doc="descripción de no más de 140 caracteres sobre el paquete a llevar.")
     size = db.Column(Enum('LARGE', 'MEDIO', 'SMALL', name='size_enum'),
                 doc="un valor que describe subjetivamente del tamaño del paquete, puede ser LARGE,MEDIUM,SMALL")
@@ -26,8 +26,17 @@ class Offer(db.Model):
 if __name__ == '__main__':
     db.create_all()
 
-class  OfferJsonSchema(Schema):
+class  newOfferResponseJsonSchema(Schema):
     id = fields.String()
     userId  = fields.String()
     createdAt  = fields.DateTime(format="%Y-%m-%dT%H:%M:%S")
+class OfferJsonSchema(Schema):
+    id = fields.String()
+    postId = fields.String()
+    description = fields.String()
+    size = fields.String()
+    fragile = fields.Boolean()
+    offer = fields.Integer()
+    createdAt = fields.DateTime(format="%Y-%m-%dT%H:%M:%S")
+    userId = fields.String()
 

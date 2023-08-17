@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.config.config import Config
-from src.models.model import db, OfferJsonSchema, Offer
+from src.models.model import db, newOfferResponseJsonSchema, Offer
 
 # Cargar variables de entorno desde .env
 env_config = Config(env_file='../.env.test')
@@ -53,7 +53,7 @@ class TestOfferModelAndSchema(unittest.TestCase):
         self.assertIsNotNone(retrieved_offer)
 
         # Serialize the retrieved offer using the schema
-        offer_schema = OfferJsonSchema()
+        offer_schema = newOfferResponseJsonSchema()
         serialized_offer = offer_schema.dump(retrieved_offer)
 
         # Assertions

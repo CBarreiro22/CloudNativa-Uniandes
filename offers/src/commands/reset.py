@@ -16,7 +16,7 @@ class Reset (BaseCommand):
         try:
             # Borrar la tabla "offer" (ADVERTENCIA: Esto eliminará todos los datos de la tabla)
             logging.info("restarting table Offer")
-            Base.metadata.drop_all(self.engine, tables=[Offer.__table__])
+
             logging.info("table Offer has been deleted")
         except Exception as e:
             logging.error("Error al borrar la tabla 'offer':", str(e))

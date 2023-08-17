@@ -2,7 +2,7 @@ import logging
 
 from .base_command import BaseCommand
 from ..errors.errors import invalid_token, new_offer_business_errors
-from ..models.model import db, Offer, OfferJsonSchema
+from ..models.model import db, Offer, newOfferResponseJsonSchema
 
 size_values = ["LARGE", "MEDIUM", "SMALL"]
 
@@ -15,7 +15,6 @@ def is_not_size_valid_option(value):
 
 class Offers(BaseCommand):
     def __init__(self, post_id, user_id, description, size, fragile, offer):
-        # Crear la conexión a la base de datos
         self.post_id = post_id
         self.user_id = user_id
         self.description = description
