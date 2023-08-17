@@ -5,6 +5,7 @@ from functools import wraps
 from flask import Blueprint, jsonify
 from flask import request
 
+from src.commands.user_service import UserService
 from src.models.model import db_session, init_db, reset_db
 from src.models.post import Post, PostJsonSchema
 
@@ -53,8 +54,7 @@ def require_token(func):
         if token is None or not token.startswith('Bearer '):
             return '', 403
         else:
-            # user_id = UserService.get_user_information(token)
-            user_id = "2324323232"
+            user_id = UserService.get_user_information(token)
             if user_id is None:
                 return '', 401
 
