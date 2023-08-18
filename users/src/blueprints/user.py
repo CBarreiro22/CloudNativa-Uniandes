@@ -4,6 +4,8 @@ from flask import jsonify, request, Blueprint
 from datetime import datetime, timedelta
 import uuid
 
+from sqlalchemy.orm import Session
+
 from users.src.models.user import Users
 from users.src.models.model import db_session, init_db
 
@@ -61,7 +63,7 @@ def create_user():
 
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
 def update_user(user_id):
-    user = db_session.query(Users).get(user_id)
+    user = db_session.query(Users).filter_by(id=user_id).first()
 
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
