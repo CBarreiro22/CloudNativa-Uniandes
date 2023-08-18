@@ -6,8 +6,8 @@ import uuid
 
 from sqlalchemy.orm import Session
 
-from users.src.errors.errors import InvalidCredentials, TokenNotHeader, InsufficientDataError, \
-    UserExist, UserNotFound, InvalidCredentials
+from users.src.errors.errors import InvalidCredentialsError, TokenNotHeaderError, InsufficientDataError, \
+    UserExistError, UserNotFound, InvalidCredentialsError
 from users.src.models.user import Users
 from users.src.models.model import db_session, init_db
 
@@ -60,7 +60,7 @@ def create_user():
         return jsonify(response), 200
     except:
         db_session.rollback()
-        raise UserExist("El usuario ya existe")
+        raise UserExistError("El usuario ya existe")
 
 
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
@@ -79,7 +79,7 @@ def update_user(user_id):
     invalid_fields = [field for field in data if field not in valid_fields]
 
     if invalid_fields:
-        raise InvalidCredentials(f"Campos inválidos: {', '.join(invalid_fields)}")
+        raise InvalidCredentialsError(f"Campos inválidos: {', '.join(invalid_fields)}")
 
     if "status" in data:
         user.status = data["status"]
@@ -115,7 +115,7 @@ def generate_token():
 
     # Verificar la contraseña del usuario
     if user.password != password:
-        raise InvalidCredentials("Credenciales inválidas")
+        raise InvalidCredentialsError("Credenciales inválidas")
 
     # Generar un nuevo UUID como token
     token = str(uuid.uuid4())
@@ -147,13 +147,13 @@ def get_user_info():
     token = request.headers.get('Authorization')
 
     if not token or not token.startswith('Bearer '):
-        raise TokenNotHeader("El token no está en el encabezado de la solicitud")
+        raise TokenNotHeaderError("El token no está en el encabezado de la solicitud")
 
     token = token.split(' ')[1]
 
     user = db_session.query(Users).filter_by(token=token).first()
     if not user or user.expireAt < datetime.utcnow():
-        raise InvalidCredentials("Invalid or expired token")
+        raise InvalidCredentialsError("Invalid or expired token")
 
     response = {
         "id": str(user.id),

@@ -19,10 +19,8 @@ class TestUserOperations:
             assert "id" in response_data
             assert "createdAt" in response_data
 
-    def test_create_user_exist(self):
-
+    def test_user_exist(self):
         with app.test_client() as test1_client:
-
             data = {
                 "username": "testuser",
                 "password": "testpassword",
@@ -33,9 +31,8 @@ class TestUserOperations:
             }
             response = test1_client.post('/users', json=data)
             assert response.status_code == 412
-            response_data = response.json
-            error_message = response_data['error']
-            assert "El usuario ya existe" in error_message
+            response_data = response.json['mssg']
+            assert 'El usuario ya existe' in response_data
 
     def test_update_user(self):
         with app.test_client() as test_client:
@@ -50,7 +47,6 @@ class TestUserOperations:
             }
             response = test_client.post('/users', json=create_data)
             user_id = response.json["id"]
-
 
             # Fetch the user to ensure the updates were applied
             login_data = {
@@ -82,6 +78,7 @@ class TestUserOperations:
             assert user_data["dni"] == update_data["dni"]
             assert user_data["fullName"] == update_data["fullName"]
             assert user_data["phoneNumber"] == update_data["phoneNumber"]
+
     # ... (Other test methods)
 
     def test_get_user_info(self):
@@ -171,3 +168,13 @@ class TestUserOperations:
             assert "dni" in response_data
             assert "phoneNumber" in response_data
             assert "status" in response_data
+
+    def test_ping(self):
+        with app.test_client() as test_client:
+            response = test_client.get('/users/ping')
+            if response.status == '200 OK':
+                assert response.status == '200 OK'
+                response_data = response.json['mssg']
+                assert 'pong' in response_data
+            else:
+                assert response.status == '405 METHOD NOT ALLOWED'

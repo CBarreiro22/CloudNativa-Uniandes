@@ -12,12 +12,12 @@ class InsufficientDataError(ApiError):
     description = "Insufficient data provided"
 
 
-class InvalidCredentials(ApiError):
+class InvalidCredentialsError(ApiError):
     code = 401
     description = "Invalid credentials"
 
 
-class TokenNotHeader(ApiError):
+class TokenNotHeaderError(ApiError):
     code = 403
     description = "El token no está en el encabezado de la solicitud"
 
@@ -27,6 +27,9 @@ class UserNotFound(ApiError):
     description = "User not found"
 
 
-class UserExist(ApiError):
+class UserExistError(ApiError):
     code = 412
     description = "User already exists"
+
+
+
