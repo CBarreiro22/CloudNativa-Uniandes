@@ -28,7 +28,7 @@ def create_route():
     source_country=json.get('sourceCountry')
     destiny_airport_code=json.get('destinyAirportCode')
     destiny_country=json.get('destinyCountry')
-    bag_cost=json.get('bagCost')
+    bag_cost=float( json.get('bagCost'))
     planned_start_date=json.get('plannedStartDate')
     planned_end_date=json.get('plannedEndDate')
     if flight_id is None or source_airport_code is None or source_country is None or destiny_airport_code is None or destiny_country is None or bag_cost is None or planned_start_date is None or planned_end_date is None:
@@ -125,9 +125,9 @@ def is_valid_uuid(value):
         return False
 
 def is_valid_date_route(start_date, end_date):
-    try:
-        if start_date< datetime.now().isoformat() or start_date>end_date:
-            return False
-        return True
-    except ValueError:
+    #try:
+    if start_date< datetime.now().isoformat() or start_date>end_date:
         return False
+    return True
+    #except ValueError:
+    #    return False
