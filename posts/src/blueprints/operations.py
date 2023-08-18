@@ -4,6 +4,7 @@ from functools import wraps
 
 from flask import Blueprint, jsonify
 from flask import request
+from datetime import datetime
 
 from src.commands.user_service import UserService
 from src.models.model import db_session, init_db, reset_db
@@ -13,8 +14,6 @@ operations_blueprint = Blueprint('operations', __name__)
 
 init_db()
 post_schema = PostJsonSchema()
-
-from datetime import datetime
 
 
 def is_invalid_iso8601_or_past(date):
@@ -83,6 +82,7 @@ def divide():
     }
     return jsonify(response_data), 201
 
+
 def validate_uuid_parameter(func):
     @wraps(func)
     def decorated(*args, **kwargs):
@@ -98,6 +98,7 @@ def validate_uuid_parameter(func):
         return func(*args, **kwargs)
 
     return decorated
+
 
 @operations_blueprint.route('/posts/<string:id>', methods=['DELETE'])
 @require_token
@@ -122,9 +123,6 @@ def get_post(id):
     if result_post is None:
         return '', 404
     return jsonify(post_schema.dump(result_post)), 200
-
-
-
 
 
 def validate_posts_parameter(func):
@@ -175,6 +173,7 @@ def reset_database():
     return jsonify({
         "msg": "Todos los datos fueron eliminados"
     }), 200
+
 
 @operations_blueprint.route('/posts/ping', methods=['GET'])
 def check_health():
