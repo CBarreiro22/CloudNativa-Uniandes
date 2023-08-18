@@ -6,6 +6,8 @@ import uuid
 
 from sqlalchemy.orm import Session
 
+from users.src.errors.errors import InvalidCredentials, TokenNotHeader, InsufficientDataError, \
+    UserExist, UserNotFound, InvalidCredentials
 from users.src.models.user import Users
 from users.src.models.model import db_session, init_db
 
@@ -28,7 +30,7 @@ def create_user():
     phoneNumber = data.get("phoneNumber")
 
     if not (username and password and email):
-        return jsonify({"error": "Datos insuficientes"}), 400
+        raise InsufficientDataError("Datos insuficientes")
 
     password_encoded = password.encode('utf-8')
     password_encriptado = hashlib.sha256(password_encoded).hexdigest()
@@ -58,7 +60,7 @@ def create_user():
         return jsonify(response), 200
     except:
         db_session.rollback()
-        return jsonify({"error": "El usuario ya existe"}), 412
+        raise UserExist("El usuario ya existe")
 
 
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
@@ -66,18 +68,18 @@ def update_user(user_id):
     user = db_session.query(Users).filter_by(id=user_id).first()
 
     if not user:
-        return jsonify({"error": "Usuario no encontrado"}), 404
+        raise UserNotFound("Usuario no encontrado")
 
     data = request.json
 
     if not data:
-        return jsonify({"error": "La petición no contiene campos para actualizar"}), 400
+        raise InsufficientDataError("La petición no contiene campos para actualizar")
 
     valid_fields = ["status", "dni", "fullName", "phoneNumber"]
     invalid_fields = [field for field in data if field not in valid_fields]
 
     if invalid_fields:
-        return jsonify({"error": f"Campos inválidos: {', '.join(invalid_fields)}"}), 400
+        raise InvalidCredentials(f"Campos inválidos: {', '.join(invalid_fields)}")
 
     if "status" in data:
         user.status = data["status"]
@@ -100,7 +102,7 @@ def generate_token():
 
     # Verificar si faltan campos en los datos JSON
     if "username" not in data or "password" not in data:
-        return jsonify({"error": "Campos faltantes en los datos"}), 400
+        raise InsufficientDataError("Campos faltantes en los datos")
 
     username = data.get("username")
     password = data.get("password")
@@ -109,11 +111,11 @@ def generate_token():
 
     # Manejar el caso cuando el usuario no existe
     if not user:
-        return jsonify({"error": "Usuario no encontrado"}), 404
+        raise UserNotFound("Usuario no encontrado")
 
     # Verificar la contraseña del usuario
     if user.password != password:
-        return jsonify({"error": "Credenciales inválidas"}), 401
+        raise InvalidCredentials("Credenciales inválidas")
 
     # Generar un nuevo UUID como token
     token = str(uuid.uuid4())
@@ -145,13 +147,13 @@ def get_user_info():
     token = request.headers.get('Authorization')
 
     if not token or not token.startswith('Bearer '):
-        return jsonify({"error": "El token no está en el encabezado de la solicitud"}), 403
+        raise TokenNotHeader("El token no está en el encabezado de la solicitud")
 
     token = token.split(' ')[1]
 
     user = db_session.query(Users).filter_by(token=token).first()
     if not user or user.expireAt < datetime.utcnow():
-        return jsonify({"error": "Token inválido o vencido"}), 401
+        raise InvalidCredentials("Invalid or expired token")
 
     response = {
         "id": str(user.id),
