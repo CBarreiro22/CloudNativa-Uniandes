@@ -1,6 +1,4 @@
-import logging
-
-import requests
+import logging, requests, re
 
 from flask import jsonify, request, Blueprint
 from jsonschema import ValidationError
@@ -8,10 +6,11 @@ from jsonschema.validators import validate
 from ..commands.offers import Offers
 from ..commands.offersFilter import OffersFilter
 from ..config.config import Config
-from ..errors.errors import no_token, json_invalid_new_offer, invalid_token
+from ..errors.errors import no_token, json_invalid_new_offer, invalid_token, no_offer_found, uuid_not_valid
 from ..models.model import newOfferResponseJsonSchema, OfferJsonSchema
 
 operations_blueprint = Blueprint('operations', __name__)
+
 new_offer_schema = {
     "type": "object",
     "properties":{
@@ -27,7 +26,7 @@ new_offer_schema = {
 @operations_blueprint.route('/offers', methods=['POST'])
 def addOffer():
     json_data = request.get_json()
-    token = validate_token(request)
+    token = validate_token()
 
     validate_new_offer_schema(json_data=json_data)
 
@@ -51,7 +50,7 @@ def addOffer():
     return jsonify(offer_data)
 
 
-def validate_token(request):
+def validate_token():
     token = request.headers.get('Authorization')
     if token == None or token == '':
         raise no_token
@@ -60,22 +59,31 @@ def validate_token(request):
 
 @operations_blueprint.route('/offers', methods=['GET'])
 def get_offers():
-    token = validate_token(request)
+    token = validate_token()
     owner = request.args.get('owner')
-    postId = request.args.get('postId')
-    no_user = owner == None or owner == ''
-    print (f'owner: {postId} user: {owner}' )
-    no_post_id = postId == None or postId ==''
+    post_id = request.args.get('postId')
+
     user_id = get_user_id(token)
-    if not no_user and owner.upper() == "ME":
+    if not owner is None and owner.upper() == "ME":
         owner = user_id
     offers_list = OffersFilter(user_id=owner,
-                               post_id=postId,no_user=no_user,
-                               no_post_id=no_post_id).execute()
+                               post_id=post_id).execute()
     offer_schema = newOfferResponseJsonSchema()
     offers_data = [offer_schema.dump(r) for r in offers_list]
     return jsonify(offers_data)
+@operations_blueprint.route('/offers/<id>', methods=['GET'])
+def get_offerById(id):
 
+    if is_not_valid_uuid(id):
+        raise uuid_not_valid
+    token = validate_token()
+    get_user_id(token)
+    offer = OffersFilter(offer_id=id).execute()
+    if not offer:
+        raise no_offer_found
+    offer_schema = newOfferResponseJsonSchema()
+    offer_data = offer_schema.dump(offer)
+    return jsonify(offer_data)
 def get_user_id(token):
     users_path = Config('.env.development').get('USERS_PATH')
     logging.info(users_path)
@@ -101,7 +109,14 @@ def parse_bool(s):
         return False
     else:
         raise ValueError(f"Invalid boolean string: {s}")
-
+def is_not_valid_uuid(input_string):
+    if input_string is None:
+        return True
+    uuid_pattern = re.compile(
+        r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+        re.IGNORECASE
+    )
+    return not bool(uuid_pattern.match(input_string))
 
 def validate_new_offer_schema(json_data):
     try:
