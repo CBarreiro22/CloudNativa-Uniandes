@@ -112,7 +112,7 @@ def generate_token():
 
     # Verificar la contraseña del usuario
     if user.password != password:
-        raise InvalidCredentialsError("Credenciales inválidas")
+        raise UserNotFound("Credenciales inválidas")
 
     # Generar un nuevo UUID como token
     token = str(uuid.uuid4())
