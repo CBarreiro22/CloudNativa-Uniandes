@@ -114,6 +114,7 @@ def get_user_id(token):
         return user_data.get('id')
     if response.status_code == 401:
         raise invalid_token
+    raise invalid_token
 
 
 def parse_bool(s):
