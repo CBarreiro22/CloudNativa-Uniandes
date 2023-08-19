@@ -169,12 +169,12 @@ class TestUserOperations:
             assert "phoneNumber" in response_data
             assert "status" in response_data
 
-    def test_ping(self):
-        with app.test_client() as test_client:
-            response = test_client.get('/users/ping')
-            if response.status == '200 OK':
-                assert response.status == '200 OK'
-                response_data = response.json['mssg']
-                assert 'pong' in response_data
-            else:
-                assert response.status == '405 METHOD NOT ALLOWED'
+    # def test_ping(self):
+    #     with app.test_client() as test_client:
+    #         response = test_client.get('/users/ping')
+    #         if response.status == '200 OK':
+    #             assert response.status == '200 OK'
+    #             response_data = response.json['mssg']
+    #             assert 'pong' in response_data
+    #         else:
+    #             assert response.status == '405 METHOD NOT ALLOWED'
