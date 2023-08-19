@@ -4,7 +4,7 @@ from flask import jsonify, request, Blueprint
 from datetime import datetime, timedelta
 import uuid
 from users.src.errors.errors import TokenNotHeaderError, InsufficientDataError, \
-    UserExistError, UserNotFound, InvalidCredentialsError
+    UserExistError, UserNotFound, InvalidCredentialsError, InternalServerError
 from users.src.models.user import Users
 from users.src.models.model import db_session, init_db
 
@@ -167,7 +167,12 @@ def get_user_info():
 
 @users_blueprint.route('/users/ping', methods=['GET'])
 def health_check():
-    return "pong", 200
+    try:
+        # Código que podría generar excepciones
+        return "pong", 200
+    except Exception as e:
+        # Manejo de la excepción
+        raise InternalServerError("Error interno")
 
 
 @users_blueprint.route('/users/reset', methods=['POST'])

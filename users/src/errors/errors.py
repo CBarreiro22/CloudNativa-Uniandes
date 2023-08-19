@@ -32,4 +32,6 @@ class UserExistError(ApiError):
     description = "User already exists"
 
 
-
+class InternalServerError(ApiError):
+    code = 500
+    description = "Internal Error"
