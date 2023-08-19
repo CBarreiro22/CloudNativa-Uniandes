@@ -1,7 +1,5 @@
 import os
 
-from flask_sqlalchemy import SQLAlchemy
-
 from .blueprints.user import users_blueprint
 from dotenv import load_dotenv
 from flask import Flask, jsonify

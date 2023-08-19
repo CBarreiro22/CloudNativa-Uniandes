@@ -1,7 +1,5 @@
 import datetime
-from xmlrpc.client import DateTime
-
-from sqlalchemy import Column, String, CheckConstraint, DateTime
+from sqlalchemy import Column, String, DateTime
 from .model import Model
 
 

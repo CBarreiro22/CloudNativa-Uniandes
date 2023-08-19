@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 
 from dotenv import load_dotenv
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, DateTime, create_engine
 from sqlalchemy.orm import declarative_base
 import uuid

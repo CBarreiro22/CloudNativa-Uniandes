@@ -3,10 +3,7 @@ import hashlib
 from flask import jsonify, request, Blueprint
 from datetime import datetime, timedelta
 import uuid
-
-from sqlalchemy.orm import Session
-
-from users.src.errors.errors import InvalidCredentialsError, TokenNotHeaderError, InsufficientDataError, \
+from users.src.errors.errors import TokenNotHeaderError, InsufficientDataError, \
     UserExistError, UserNotFound, InvalidCredentialsError
 from users.src.models.user import Users
 from users.src.models.model import db_session, init_db
