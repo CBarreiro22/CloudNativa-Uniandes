@@ -14,7 +14,7 @@ class Offer(db.Model):
     postId = db.Column (String, primary_key =True, doc="id de la publicación")
     userId = db.Column(String, doc="identificador del usuario que realizó la oferta")
     description = db.Column(String(length=140), doc="descripción de no más de 140 caracteres sobre el paquete a llevar.")
-    size = db.Column(Enum('LARGE', 'MEDIO', 'SMALL', name='size_enum'),
+    size = db.Column(String, name='size',
                 doc="un valor que describe subjetivamente del tamaño del paquete, puede ser LARGE,MEDIUM,SMALL")
     fragile =db.Column(Boolean, doc="si es un paquete delicado o no")
     offer =db.Column(Integer, doc="valor en dólares de la oferta por llevar el paquete")
