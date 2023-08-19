@@ -54,7 +54,7 @@ def create_user():
 
         db_session.close()
 
-        return jsonify(response), 200
+        return jsonify(response), 201
     except:
         db_session.rollback()
         raise UserExistError("El usuario ya existe")
