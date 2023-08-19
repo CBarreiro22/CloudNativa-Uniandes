@@ -76,7 +76,7 @@ def update_user(user_id):
     invalid_fields = [field for field in data if field not in valid_fields]
 
     if invalid_fields:
-        raise InvalidCredentialsError(f"Campos inválidos: {', '.join(invalid_fields)}")
+        raise InsufficientDataError(f"Campos inválidos: {', '.join(invalid_fields)}")
 
     if "status" in data:
         user.status = data["status"]
@@ -90,7 +90,7 @@ def update_user(user_id):
     db_session.commit()
     db_session.close()
 
-    return jsonify({"msg": "El usuario ha sido actualizado"}), 200
+    return jsonify({"msg": "el usuario ha sido actualizado"}), 200
 
 
 @users_blueprint.route('/users/auth', methods=['POST'])
