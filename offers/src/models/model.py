@@ -1,42 +1,42 @@
-import uuid, datetime
+import os
+import uuid
+from datetime import datetime
 
-from flask_sqlalchemy import SQLAlchemy
-from marshmallow import Schema, fields
-from sqlalchemy import String, Integer, DateTime, Boolean, UUID, Enum
+from dotenv import load_dotenv
+from sqlalchemy import String, Integer, DateTime, Boolean, UUID, create_engine, Column
+from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
+
+# Load environment variables from the .env.development file
+loaded = load_dotenv('.env.development')
+
+# Create a SQLAlchemy engine using environment variables for database connection
+engine = create_engine(
+    f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}')
+
+# Create a scoped database session
+db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+
+# Create a base class for declarative models
+Base = declarative_base()
+Base.query = db_session.query_property()
 
 
+# Initialize the database schema
+def init_db():
+    Base.metadata.create_all(bind=engine)
 
-db = SQLAlchemy()
+class Model(Base):
+    __abstract__ = True
 
-class Offer(db.Model):
-    __tablename__ = 'offer'
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    postId = db.Column (String, primary_key =True, doc="id de la publicación")
-    userId = db.Column(String, doc="identificador del usuario que realizó la oferta")
-    description = db.Column(String(length=140), doc="descripción de no más de 140 caracteres sobre el paquete a llevar.")
-    size = db.Column(String, name='size',
-                doc="un valor que describe subjetivamente del tamaño del paquete, puede ser LARGE,MEDIUM,SMALL")
-    fragile =db.Column(Boolean, doc="si es un paquete delicado o no")
-    offer =db.Column(Integer, doc="valor en dólares de la oferta por llevar el paquete")
-    createdAt = db.Column(DateTime, default=datetime.datetime.utcnow,doc="fecha y hora de creación de la publicación")
+    # Common attributes for all models
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    createdAt = Column(DateTime, default=datetime.utcnow)
+
+
+    def __init__(self):
+        # Set the creation and update timestamps
+        self.createdAt = datetime.utcnow()
+        self.updatedAt = datetime.utcnow()
 
 
 # Schema definition remains the same
-
-if __name__ == '__main__':
-    db.create_all()
-
-class  newOfferResponseJsonSchema(Schema):
-    id = fields.String()
-    userId  = fields.String()
-    createdAt  = fields.DateTime(format="%Y-%m-%dT%H:%M:%S")
-class OfferJsonSchema(Schema):
-    id = fields.String()
-    postId = fields.String()
-    description = fields.String()
-    size = fields.String()
-    fragile = fields.Boolean()
-    offer = fields.Integer()
-    createdAt = fields.DateTime(format="%Y-%m-%dT%H:%M:%S")
-    userId = fields.String()
-

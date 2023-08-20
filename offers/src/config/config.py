@@ -12,7 +12,8 @@ class Config(object):
                             filename='app.log',  # Log to a file
                             filemode='w')
 
-
+    def getConfig(self):
+        return self
 
     def load_env(self):
         if os.path.exists(self.env_file):

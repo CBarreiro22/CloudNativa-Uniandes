@@ -3,9 +3,10 @@ from enum import Enum
 
 from .base_command import BaseCommand
 from ..errors.errors import invalid_token, new_offer_business_errors
-from ..models.model import db, Offer, newOfferResponseJsonSchema
+from ..models.model import init_db, db_session
+from ..models.offer import Offer
 
-
+init_db()
 class SizeEnum(Enum):
     LARGE = 'LARGE'
     MEDIUM = 'MEDIUM'
@@ -35,8 +36,8 @@ class Offers(BaseCommand):
             # Crear una sesión para interactuar con la base de datos
 
             # Agregar la nueva oferta a la sesión y confirmar la transacción para que se guarde en la base de datos
-            db.session.add(nueva_oferta)
-            db.session.commit()
+            db_session.add(nueva_oferta)
+            db_session.commit()
             logging.info("Oferta agregada exitosamente.")
             return nueva_oferta
         except Exception as e:

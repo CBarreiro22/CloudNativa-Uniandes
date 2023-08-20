@@ -1,12 +1,13 @@
-from enum import Enum
-
 from flask import jsonify
 
 from src.commands.base_command import BaseCommand
 from src.errors.errors import no_offer_found
-from src.models.model import Offer, db
+from src.models.model import db_session, init_db
+from src.models.offer import Offer
 
 DELETE = 'DELETE'
+
+init_db()
 
 
 class OffersOperations(BaseCommand):
@@ -42,18 +43,19 @@ class OffersOperations(BaseCommand):
         offer = self.get_offer_by_id()
         if not offer:
             raise no_offer_found
-        db.session.delete(offer)
-        db.session.commit()
+        db_session.delete(offer)
+        db_session.commit()
         return True
+
     def reset(self):
         try:
 
-            db.session.query(Offer).delete()
-            db.session.commit()
+            db_session.query(Offer).delete()
+            db_session.commit()
 
             return jsonify({"msg": "Todos los datos fueron eliminados"}), 200
         except Exception as e:
-            db.session.rollback()
+            db_session.rollback()
             return jsonify({"message": "An error occurred while deleting offers"}), 500
 
     def execute(self):
