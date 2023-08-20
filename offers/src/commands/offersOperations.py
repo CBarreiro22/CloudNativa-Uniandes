@@ -1,9 +1,9 @@
 from flask import jsonify
 
-from src.commands.base_command import BaseCommand
-from src.errors.errors import no_offer_found
-from src.models.model import db_session, init_db
-from src.models.offer import Offer
+from .base_command import BaseCommand
+from ..errors.errors import no_offer_found
+from ..models.model import db_session, init_db
+from ..models.offer import Offer
 
 DELETE = 'DELETE'
 

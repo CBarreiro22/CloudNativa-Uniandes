@@ -6,7 +6,6 @@ import pytest
 import requests
 
 from offers.src.main import app
-
 # Cargar variables de entorno desde .env
 
 options = ["LARGE", "MEDIUM", "SMALL"]

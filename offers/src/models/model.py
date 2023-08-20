@@ -7,7 +7,7 @@ from sqlalchemy import String, Integer, DateTime, Boolean, UUID, create_engine, 
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
 
 # Load environment variables from the .env.development file
-loaded = load_dotenv('.env.development')
+loaded = load_dotenv('./offers/.env.development')
 
 # Create a SQLAlchemy engine using environment variables for database connection
 engine = create_engine(
