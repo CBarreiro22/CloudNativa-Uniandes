@@ -4,20 +4,12 @@ from dotenv import load_dotenv
 
 from flask import Flask, jsonify
 
+from .blueprints.offer import offer_blueprint
 from .errors.errors import ApiError
 
 app = Flask(__name__)
+app.register_blueprint(offer_blueprint)
 
-
-def initialize_blueprints(app):
-    # Importa los blueprints y configúralos
-    from .blueprints.offer import offer_blueprint
-
-    # Registra los blueprints en la instancia de app
-    app.register_blueprint(offer_blueprint)
-
-
-initialize_blueprints(app)
 
 loaded = load_dotenv('.env.development')
 

@@ -59,6 +59,7 @@ class TestOfferOperations:
                 'Authorization': f'Bearer {token}'
                 # Add more headers as needed
             }
+            print (offer_data)
             response = test_client.post("/offers", json=offer_data, headers=headers)
             assert response.status_code == 200
             response_data = response.json
