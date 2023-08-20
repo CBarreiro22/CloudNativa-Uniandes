@@ -14,7 +14,7 @@ from ..models.offer import newOfferResponseJsonSchema
 
 DELETE = 'DELETE'
 
-offer_blueprint = Blueprint('operations', __name__)
+offer_blueprint = Blueprint('offer', __name__)
 
 new_offer_schema = {
     "type": "object",

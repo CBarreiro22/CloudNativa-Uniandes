@@ -5,7 +5,7 @@ import uuid
 import pytest
 import requests
 
-from src.main import app
+from offers.src.main import app
 
 # Cargar variables de entorno desde .env
 
@@ -37,37 +37,43 @@ def setup_user_and_get_id(request):
 
     request.addfinalizer(teardown)
     return user_id, token
+
+
 class TestOfferOperations:
-    def test_post_offer_ok(self, setup_user_and_get_id):
-        with app.test_client() as test_client:
-            user_id, token = setup_user_and_get_id
-            post_id = str(uuid.uuid4())
-            random_integer = random.randint(1, 10000)
-            description_test = "Descripción de prueba menor a 140 caracteres"
-            random_option = random.choice(options)
-            random_boolean = random.choice([True, False])
-            offer_data = {
-                "postId": post_id,
-                "userId": user_id,
-                "description": description_test,
-                "size": random_option,
-                "fragile": random_boolean,
-                "offer": random_integer
-            }
 
-            headers = {
-                'Authorization': f'Bearer {token}'
-                # Add more headers as needed
-            }
-            print (offer_data)
-            response = test_client.post("/offers", json=offer_data, headers=headers)
-            assert response.status_code == 200
-            response_data = response.json
-            assert "id" in response_data
-            assert "createdAt" in response_data
-            response = test_client.post("/offers/reset", json='')
-            assert response.status_code == 200
-            response_data = response.json
-            assert "msg" in response_data
+    @pytest.fixture
+    def test_client(self):
+        with app.test_client() as client:
+            yield client
 
+    def test_post_offer_ok(self, setup_user_and_get_id, test_client):
+        user_id, token = setup_user_and_get_id
+        post_id = str(uuid.uuid4())
+        random_integer = random.randint(1, 10000)
+        description_test = "Descripción de prueba menor a 140 caracteres"
+        random_option = random.choice(options)
+        random_boolean = random.choice([True, False])
+        offer_data = {
+            "postId": post_id,
+            "userId": user_id,
+            "description": description_test,
+            "size": random_option,
+            "fragile": random_boolean,
+            "offer": random_integer
+        }
 
+        headers = {
+            'Authorization': f'Bearer {token}'
+            # Add more headers as needed
+        }
+        print(offer_data)
+        response = test_client.post('/offers', json=offer_data, headers=headers)
+        print(response.json)
+        assert response.status_code == 200
+        response_data = response.json
+        assert "id" in response_data
+        assert "createdAt" in response_data
+        response = test_client.post("/offers/reset", json='')
+        assert response.status_code == 200
+        response_data = response.json
+        assert "msg" in response_data
