@@ -1,9 +1,6 @@
 # Utilizamos la imagen base de Python 3.10
 FROM python:3.10
 
-# Instalamos PostgreSQL
-RUN apt-get update && apt-get install -y postgresql postgresql-contrib
-
 # Establecemos el directorio de trabajo dentro del contenedor
 WORKDIR /users
 
