@@ -20,4 +20,4 @@ EXPOSE 3000
 ENV ENV_FILE .env.development
 
 # Comando para correr la aplicación Flask
-CMD su root && service postgresql start && su appuser && FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3000
+CMD FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3000
