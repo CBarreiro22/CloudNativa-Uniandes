@@ -3,10 +3,10 @@ import hashlib
 from flask import jsonify, request, Blueprint
 from datetime import datetime, timedelta
 import uuid
-from users.src.errors.errors import TokenNotHeaderError, InsufficientDataError, \
+from ..errors.errors import TokenNotHeaderError, InsufficientDataError, \
     UserExistError, UserNotFound, InvalidCredentialsError, InternalServerError
-from users.src.models.user import Users
-from users.src.models.model import db_session, init_db
+from ..models.user import Users
+from ..models.model import db_session, init_db
 
 # Crear el Blueprint para la gestión de usuarios
 users_blueprint = Blueprint('users', __name__)
