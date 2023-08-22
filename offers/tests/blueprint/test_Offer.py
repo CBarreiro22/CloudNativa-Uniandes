@@ -1,52 +1,30 @@
 import os
 import random
+import subprocess
+import time
 import uuid
 
 import pytest
 import requests
 
 from offers.src.main import app
+
 # Cargar variables de entorno desde .env
 
 options = ["LARGE", "MEDIUM", "SMALL"]
 
 
-@pytest.fixture(scope="class")
-def setup_user_and_get_id(request):
-    users_path = os.getenv("USERS_PATH")
-    data = {
-        "username": "testuser",
-        "password": "testpassword",
-        "email": "test@example.com",
-        "dni": "12345678",
-        "fullName": "Test User",
-        "phoneNumber": "123456789"
-    }
-    response_create_user = requests.post(users_path + '/users', json=data)
-    user_id = response_create_user.json()['id']
-    data = {
-        "username": "testuser",
-        "password": "testpassword"
-    }
-    response = requests.post(users_path + '/users/auth', json=data)
-    token = response.json()['token']
-
-    def teardown():
-        requests.post(users_path + '/users/reset', json='')
-
-    request.addfinalizer(teardown)
-    return user_id, token
-
 
 class TestOfferOperations:
+
 
     @pytest.fixture
     def test_client(self):
         with app.test_client() as client:
             yield client
 
-    def test_post_offer_ok(self, setup_user_and_get_id, test_client):
-        user_id, token = setup_user_and_get_id
+    def test_post_offer_ok(self,  test_client):
+
         post_id = str(uuid.uuid4())
         random_integer = random.randint(1, 10000)
         description_test = "Descripción de prueba menor a 140 caracteres"
@@ -54,7 +32,7 @@ class TestOfferOperations:
         random_boolean = random.choice([True, False])
         offer_data = {
             "postId": post_id,
-            "userId": user_id,
+            "userId": "468dca05-3aa5-4d84-8e70-93b8b54f7a15",
             "description": description_test,
             "size": random_option,
             "fragile": random_boolean,
@@ -62,12 +40,10 @@ class TestOfferOperations:
         }
 
         headers = {
-            'Authorization': f'Bearer {token}'
+            'Authorization': f'Bearer 468dca05-3aa5-4d84-8e70-93b8b54f7a15'
             # Add more headers as needed
         }
-        print(offer_data)
         response = test_client.post('/offers', json=offer_data, headers=headers)
-        print(response.json)
         assert response.status_code == 200
         response_data = response.json
         assert "id" in response_data
