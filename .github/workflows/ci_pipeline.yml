@@ -4,7 +4,7 @@ jobs:
   job1:
     name: Pruebas
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, 'Se hace merge a la rama main')
+    if: github.event.head_commit.message == 'github-actions[bot] Se hace merge a la rama main'
     steps:
     - name: Checkout de repositorio
       uses: actions/checkout@v3
@@ -25,4 +25,3 @@ jobs:
         pipenv run pytest --cov=users/src  -v users/tests/* -s --cov-fail-under=70
         pipenv run pytest --cov=posts/src -v posts/tests/* -s --cov-fail-under=70
         pipenv run pytest --cov=routes/src  -v routes/tests/* -s --cov-fail-under=70
-
