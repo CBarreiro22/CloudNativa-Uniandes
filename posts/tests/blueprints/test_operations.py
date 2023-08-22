@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime, timedelta
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from src.main import app
 from src.models.model import db_session
@@ -21,7 +21,7 @@ class TestOperations(unittest.TestCase):
         response = self.tester.post("/posts", json={
             'routeId': 'fnajkdkjawDKJWAndlkaw',
             'expireAt': (datetime.now() + timedelta(days=1)).isoformat()
-        }, headers={'Authorization': 'Bearer your_valid_token_here'})
+        }, headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
 
         self.assertEqual(response.status_code, 201)
         data = response.json
@@ -36,7 +36,7 @@ class TestOperations(unittest.TestCase):
         response = self.tester.post("/posts", json={
             'routeId': 'fnajkdkjawDKJWAndlkaw',
             'expireAt': 'invalid_datetime_format'
-        }, headers={'Authorization': 'Bearer your_valid_token_here'})
+        }, headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
 
         self.assertEqual(response.status_code, 412)
 
@@ -50,7 +50,7 @@ class TestOperations(unittest.TestCase):
         db_session.commit()
 
         response = self.tester.delete(f"/posts/{test_post.id}",
-                                      headers={'Authorization': 'Bearer your_valid_token_here'})
+                                      headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {"msg": "La publicación fue eliminada"})
 
@@ -63,7 +63,8 @@ class TestOperations(unittest.TestCase):
         db_session.add(test_post)
         db_session.commit()
 
-        response = self.tester.get(f"/posts/{test_post.id}", headers={'Authorization': 'Bearer your_valid_token_here'})
+        response = self.tester.get(f"/posts/{test_post.id}",
+                                   headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
         self.assertEqual(response.status_code, 200)
         self.assertIn('id', response.json)
         self.assertIn('userId', response.json)
@@ -73,7 +74,7 @@ class TestOperations(unittest.TestCase):
     def test_get_posts(self, mock_get_user_info):
         mock_get_user_info.return_value = 'test_user_id'
 
-        response = self.tester.get("/posts", headers={'Authorization': 'Bearer your_valid_token_here'})
+        response = self.tester.get("/posts", headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
         self.assertEqual(response.status_code, 200)
         data = response.json
         self.assertIsInstance(data, list)
@@ -98,7 +99,7 @@ class TestOperations(unittest.TestCase):
         db_session.commit()
 
         response = self.tester.get("/posts?expire=true&route=route_1&owner=me",
-                                   headers={'Authorization': 'Bearer your_valid_token_here'})
+                                   headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
         self.assertEqual(response.status_code, 200)
         data = response.json
         self.assertIsInstance(data, list)
@@ -110,27 +111,45 @@ class TestOperations(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data.decode('utf-8'), 'pong')
 
-    def test_delete_post_invalid_uuid(self):
+    @patch('src.commands.user_service.UserService.get_user_information')
+    def test_delete_post_invalid_uuid(self, mock_get_user_info):
+        mock_get_user_info.return_value = 'test_user_id'
+
         invalid_uuid = "invalid_uuid_format"
 
         response = self.tester.delete(f"/posts/{invalid_uuid}",
-                                      headers={'Authorization': 'Bearer your_valid_token_here'})
+                                      headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
         self.assertEqual(response.status_code, 400)
 
-    def test_invalid_uuid_parameter_missing_id(self):
-        response = self.tester.get("/posts/some_route", headers={'Authorization': 'Bearer your_valid_token_here'})
+    @patch('src.commands.user_service.UserService.get_user_information')
+    def test_invalid_uuid_parameter_missing_id(self, mock_get_user_info):
+        mock_get_user_info.return_value = 'test_user_id'
+
+        response = self.tester.get("/posts/some_route",
+                                   headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
         self.assertEqual(response.status_code, 400)
 
-    def test_invalid_uuid_parameter_invalid_id(self):
+    @patch('src.commands.user_service.UserService.get_user_information')
+    def test_invalid_uuid_parameter_invalid_id(self, mock_get_user_info):
+        mock_get_user_info.return_value = 'test_user_id'
+
         invalid_id = "invalid_id_format"
 
-        response = self.tester.get(f"/posts/{invalid_id}", headers={'Authorization': 'Bearer your_valid_token_here'})
+        response = self.tester.get(f"/posts/{invalid_id}",
+                                   headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
         self.assertEqual(response.status_code, 400)
 
-    def test_get_posts_invalid_expire(self):
-        response = self.tester.get("/posts?expire=invalid_value",
-                                   headers={'Authorization': 'Bearer your_valid_token_here'})
-        self.assertEqual(response.status_code, 400)
+    @patch('src.commands.user_service.UserService.get_user_information')
+    def test_get_posts_invalid_expire(self, mock_get_user_info):
+        mock_get_user_info.return_value = 'test_user_id'
+
+        mock_response = Mock()
+        mock_response.status_code = 200
+
+        with patch('src.commands.user_service.requests.get', return_value=mock_response):
+            response = self.tester.get("/posts?expire=invalid_value",
+                                       headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
+            self.assertEqual(response.status_code, 400)
 
     if __name__ == '__main__':
         unittest.main()

@@ -68,7 +68,7 @@ def require_token(func):
 @operations_blueprint.route('/posts', methods=['POST'])
 @require_token
 @validate_request_body
-def divide():
+def create_post():
     json = request.get_json()
     user_id = request.user_id
     post_entity = Post(json.get("routeId"), user_id, json.get("expireAt"))
@@ -129,7 +129,7 @@ def validate_posts_parameter(func):
     @wraps(func)
     def decorated(*args, **kwargs):
         expire = request.args.get('expire')
-        if expire is not None and expire not in ["true", "false"]:
+        if expire is not None and expire not in ['true', 'false']:
             return '', 400
         return func(*args, **kwargs)
 
