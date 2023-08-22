@@ -7,7 +7,6 @@ jobs:
   job1:
     name: Pruebas
     runs-on: ubuntu-latest
-    if: github.event.head_commit.message == 'merge'
     steps:
     - name: Checkout de repositorio
       uses: actions/checkout@v3
