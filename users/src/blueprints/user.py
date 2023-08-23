@@ -121,10 +121,10 @@ def generate_token():
     expire_at = datetime.utcnow() + timedelta(hours=1)
     user.expireAt = expire_at
     user.token = token
-    if user.token is not None:
-        user.status = "VERIFICADO"
-    else:
-        user.status = "POR_VERIFICAR"
+    #if user.token is not None:
+    #    user.status = "VERIFICADO"
+    #else:
+    #    user.status = "POR_VERIFICAR"
     db_session.commit()
 
     response = {
