@@ -21,6 +21,7 @@ jobs:
     - name: Pruebas y coverage
       id: cubrimiento
       run: |
+
         if [ -d offers/tests ]; then
             pipenv run pytest --cov=offers/src -v -s --cov-fail-under=70
         fi
