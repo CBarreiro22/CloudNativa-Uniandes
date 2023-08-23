@@ -1,6 +1,8 @@
-from src.main import app
 import json
 import os
+
+from calculator.src.main import app
+
 
 class TestOperations():
   def test_sum_two_number(self):
