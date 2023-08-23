@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres
+    container_name: postgres_container
+    restart: always
+    env_file:
+      - ./posts/.env.development
+    ports:
+      - "5431:5431"
+    networks:
+      - user_net
+    volumes:
+      - dbdata1:/var/lib/postgresql/data
+
+  users:
+    build:
+      context: ./posts
+      dockerfile: Dockerfile
+    container_name: users_container
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - user_net
+      - app_net
+    env_file: posts/.env.development
+    depends_on:
+      - postgres
+
+networks:
+  user_net:
+    driver: bridge
+  app_net:
+    driver: bridge
+
+volumes:
+  dbdata1:
