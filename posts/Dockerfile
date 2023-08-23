@@ -7,8 +7,14 @@ WORKDIR /posts
 # Copiamos el archivo requirements.txt a la imagen
 COPY requirements.txt .
 
-# Instalamos las dependencias del proyecto
-RUN pip install -r requirements.txt
+# Instalamos las dependencias del proyecto utilizando apk
+RUN apk update && \
+    apk add --no-cache build-base && \
+    apk add --no-cache postgresql-dev && \
+    pip install -r requirements.txt
+
+## Instalamos las dependencias del proyecto
+#RUN pip install -r requirements.txt
 
 # Copiamos la carpeta src al directorio de trabajo en la imagen
 COPY src /posts/src

@@ -1,21 +1,34 @@
 version: '3.9'
 services:
-  postgres:
+  postgres_user:
     image: postgres
-    container_name: postgres_container
+    container_name: postgres_container_user
     restart: always
     env_file:
-      - ./posts/.env.development
+      - ./users/.env.development
     ports:
-      - "5431:5431"
+      - "5432:5432"
     networks:
       - user_net
     volumes:
       - dbdata1:/var/lib/postgresql/data
 
+  postgres_post:
+    image: postgres
+    container_name: postgres_container_post
+    restart: always
+    env_file:
+      - ./posts/.env.development
+    ports:
+      - "5433:5432"
+    networks:
+      - post_net
+    volumes:
+      - dbdata1:/var/lib/postgresql/data
+
   users:
     build:
-      context: ./posts
+      context: ./users
       dockerfile: Dockerfile
     container_name: users_container
     restart: always
@@ -24,14 +37,31 @@ services:
     networks:
       - user_net
       - app_net
+    env_file: users/.env.development
+    depends_on:
+      - postgres_user
+
+  posts:
+    build:
+      context: ./posts
+      dockerfile: Dockerfile
+    container_name: posts_container
+    restart: always
+    ports:
+      - "3001:3001"
+    networks:
+      - post_net
+      - app_net
     env_file: posts/.env.development
     depends_on:
-      - postgres
+      - postgres_post
 
 networks:
   user_net:
     driver: bridge
   app_net:
+    driver: bridge
+  post_net:
     driver: bridge
 
 volumes:
