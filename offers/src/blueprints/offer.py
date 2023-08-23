@@ -143,13 +143,6 @@ def get_user_id(token):
 def parse_bool(s):
     if isinstance(s, bool):
         return s
-    s_lower = s.lower()
-    if s_lower in ("true", "yes", "1"):
-        return True
-    elif s_lower in ("false", "no", "0"):
-        return False
-    else:
-        raise ValueError(f"Invalid boolean string: {s}")
 
 
 def is_not_valid_uuid(input_string):

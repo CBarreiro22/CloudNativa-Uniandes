@@ -124,7 +124,7 @@ class TestOfferOperations(unittest.TestCase):
         response = self.tester.post('/offers', json=offer_data, headers=headers)
 
     @patch('offers.src.commands.userService.UserService.get_user_information')
-    def test_offer_all(self, mock_get_user_info):
+    def test_get_offer_all(self, mock_get_user_info):
         mock_get_user_info.return_value = '70a3a66e-5c2e-4f87-9f5c-12c8eac9b2b1'
         headers = {
             'Authorization': f'Bearer 468dca05-3aa5-4d84-8e70-93b8b54f7a15'
@@ -149,18 +149,25 @@ class TestOfferOperations(unittest.TestCase):
         offer_list_data = response_get.get_json()
         assert response_get.status_code == 200
         assert len(offer_list_data) >= 5
+        id = offer_list_data[0].get ("id")
+
+        response_get = self.tester.get(f'/offers/{id}', headers=headers)
+        assert response_get.status_code == 200
+
+        response_get = self.tester.get(f'/offers/8eb3e4b9-6b33-417b-857d-9c2b5e9c3a5a', headers=headers)
+        assert response_get.status_code == 404
 
         response = self.tester.get(f'/offers?post={post_id}',headers=headers)
         response.get_json()
-        assert response_get.status_code == 200
+        assert response.status_code == 200
 
         response = self.tester.get(f'/offers?owner=me', headers=headers)
         response.get_json()
-        assert response_get.status_code == 200
+        assert response.status_code == 200
 
         response = self.tester.get(f'/offers?owner=me&post={post_id}', headers=headers)
         response.get_json()
-        assert response_get.status_code == 200
+        assert response.status_code == 200
 
         response = self.tester.post("/offers/reset", json='')
         assert response.status_code == 200
