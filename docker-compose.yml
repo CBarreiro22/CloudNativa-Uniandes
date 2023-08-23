@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres
+    container_name: postgres_container
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: apisNativaNube
+    ports:
+      - "5432:5432"
+    networks:
+      - user_net
+    volumes:
+      - dbdata1:/var/lib/postgresql/data
+
+  users:
+    image: users
+    container_name: users_container
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - user_net
+    env_file: users/.env.development
+    depends_on:
+      - postgres
+
+networks:
+  user_net:
+    driver: bridge
+
+volumes:
+  dbdata1:

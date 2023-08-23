@@ -1,0 +1,27 @@
+name: Manual Test Coverage
+on:
+  workflow_dispatch: {}
+
+jobs:
+  test_calculator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout de repositorio
+        uses: actions/checkout@v3
+      - name: Configuración de entorno de python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+      - name: Instalación de librerías y dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv
+          pipenv install coverage pytest python-dotenv wheel flask marshmallow python-abc pytest-cov pytest-mock
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Pruebas y coverage
+        id: cubrimiento
+        run: |
+          pipenv run pytest --cov=users/src -v -s --cov-fail-under=70
+          pipenv run pytest --cov=offers/src -v -s --cov-fail-under=70
+          pipenv run pytest --cov=posts/src -v -s --cov-fail-under=70
+          pipenv run pytest --cov=routes/src -v -s --cov-fail-under=70
