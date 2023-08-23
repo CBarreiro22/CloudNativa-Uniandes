@@ -1,4 +1,5 @@
 import logging
+import os
 import re
 from functools import wraps
 
@@ -11,8 +12,8 @@ from jsonschema.validators import validate
 from ..commands.offers import Offers
 from ..commands.offersOperations import OffersOperations
 from ..commands.userService import UserService
-from ..config.config import Config
-from ..errors.errors import no_token, json_invalid_new_offer, invalid_token, no_offer_found, uuid_not_valid
+
+from ..errors.errors import json_invalid_new_offer, invalid_token, no_offer_found, uuid_not_valid
 from ..models.offer import newOfferResponseJsonSchema, OfferJsonSchema
 
 DELETE = 'DELETE'
@@ -125,7 +126,7 @@ def reset():
 
 
 def get_user_id(token):
-    users_path = Config('.env.development').get('USERS_PATH')
+    users_path = os.get('USERS_PATH')
     logging.info(users_path)
     logging.info(token)
     headers = {'Authorization': token}
