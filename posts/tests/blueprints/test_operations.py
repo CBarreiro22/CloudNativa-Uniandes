@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch, Mock
 
 from src.main import app
@@ -10,6 +10,7 @@ from src.models.post import Post
 class TestOperations(unittest.TestCase):
     def setUp(self):
         self.tester = app.test_client(self)
+        self.tester = app.test_client(self)
 
     def tearDown(self):
         db_session.remove()
@@ -18,9 +19,12 @@ class TestOperations(unittest.TestCase):
     def test_create_post(self, mock_get_user_info):
         mock_get_user_info.return_value = 'test_user_id'
 
+        future_datetime = datetime.now(timezone.utc) + timedelta(days=1)
+        formatted_expire_at = future_datetime.strftime('%Y-%m-%dT%H:%M:%S.%f') + 'Z'
+
         response = self.tester.post("/posts", json={
             'routeId': 'fnajkdkjawDKJWAndlkaw',
-            'expireAt': (datetime.now() + timedelta(days=1)).isoformat()
+            'expireAt': formatted_expire_at
         }, headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
 
         self.assertEqual(response.status_code, 201)
@@ -91,10 +95,17 @@ class TestOperations(unittest.TestCase):
     def test_get_posts_with_filters(self, mock_get_user_info):
         mock_get_user_info.return_value = 'test_user_id'
 
+        future_datetime = datetime.now(timezone.utc)
+        formatted_expire_at = future_datetime.strftime('%Y-%m-%dT%H:%M:%S.%f') + 'Z'
+        future_datetime2 = datetime.now(timezone.utc) + timedelta(days=2)
+        formatted_expire_at2 = future_datetime2.strftime('%Y-%m-%dT%H:%M:%S.%f') + 'Z'
+        future_datetime3 = datetime.now(timezone.utc) + timedelta(days=3)
+        formatted_expire_at3 = future_datetime3.strftime('%Y-%m-%dT%H:%M:%S.%f') + 'Z'
+
         # Create test posts with different properties
-        test_post1 = Post('route_1', 'test_user_id', datetime.now())
-        test_post2 = Post('route_2', 'test_user_id', datetime.now() + timedelta(days=2))
-        test_post3 = Post('route_3', 'other_user_id', datetime.now() + timedelta(days=5))
+        test_post1 = Post('route_1', 'test_user_id', formatted_expire_at)
+        test_post2 = Post('route_2', 'test_user_id', formatted_expire_at2)
+        test_post3 = Post('route_3', 'other_user_id', formatted_expire_at3)
         db_session.add_all([test_post1, test_post2, test_post3])
         db_session.commit()
 

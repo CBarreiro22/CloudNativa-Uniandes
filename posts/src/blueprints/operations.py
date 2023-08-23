@@ -1,10 +1,11 @@
 import datetime
 import uuid
+from datetime import datetime, timezone
 from functools import wraps
 
+from dateutil.parser import isoparse
 from flask import Blueprint, jsonify
 from flask import request
-from datetime import datetime
 
 from src.commands.user_service import UserService
 from src.models.model import db_session, init_db, reset_db
@@ -19,12 +20,15 @@ post_schema = PostJsonSchema()
 def is_invalid_iso8601_or_past(date):
     if isinstance(date, str):
         try:
-            date = datetime.fromisoformat(date)
+            date_str_without_decimals = date.split('.')[0]
+            date = datetime.strptime(date_str_without_decimals, "%Y-%m-%dT%H:%M:%S")
         except ValueError:
             return True
-
-    current_datetime = datetime.now()
-    return date <= current_datetime
+    current_datetime = datetime.now(timezone.utc).replace(tzinfo=None)
+    try:
+        return date <= current_datetime
+    except ValueError:
+        return True
 
 
 def validate_request_body(func):
@@ -38,7 +42,7 @@ def validate_request_body(func):
 
         expireAt = json_data.get("expireAt")
         if is_invalid_iso8601_or_past(expireAt):
-            return 'La fecha expiración no es válida', 412
+            return jsonify({"error": "La fecha expiración no es válida"}), 412
 
         return func(*args, **kwargs)
 
