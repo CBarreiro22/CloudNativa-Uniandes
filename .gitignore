@@ -165,3 +165,6 @@ Pipfile.lock
 .idea/s202314-proyecto-grupo11.iml
 users/.idea/users.iml
 .idea/users_s202314-proyecto-grupo11.iml
+offers/.idea/offers.iml
+offers/.idea/offers.iml
+*.iml

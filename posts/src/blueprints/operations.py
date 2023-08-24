@@ -41,7 +41,7 @@ def validate_request_body(func):
 
         expireAt = json_data.get("expireAt")
         if is_invalid_iso8601_or_past(expireAt):
-            return jsonify({"error": "La fecha expiración no es válida"}), 412
+            return jsonify({"msg": "La fecha expiración no es válida"}), 412
 
         return func(*args, **kwargs)
 
@@ -109,12 +109,12 @@ def validate_uuid_parameter(func):
 def delete_post(id):
     result_post = Post.query.filter(Post.id == id).first()
     if result_post is None:
-        return '', 400
+        return '', 404
     db_session.delete(result_post)
     db_session.commit()
 
     return jsonify({
-        "msg": "La publicación fue eliminada"
+        "msg": "la publicación fue eliminada"
     }), 200
 
 
