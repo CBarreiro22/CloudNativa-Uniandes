@@ -1,0 +1,32 @@
+team:
+   name: <nombre del equipo>
+   members:
+      - user: CBarreiro22
+        percentage: 25
+      - user: iolivaMISO
+        percentage: 25
+      - user: david-lyon-uniandes
+        percentage: 25
+      - user: Tobeny
+        percentage: 25
+board: https://github.com/orgs/MISW-4301-Desarrollo-Apps-en-la-Nube/projects/110
+user-management:
+  folder: users
+  port: 3000
+  authors:
+    - CBarreiro22
+post-management:
+  folder: david-lyon-uniandes
+  port: 3001
+  authors:
+    - david-lyon-uniandes
+offer-management:
+  folder: offers
+  port: 3003
+  authors:
+    - iolivaMISO
+route-management:
+  folder: routes
+  port: 3002
+  authors:
+    - Tobeny
