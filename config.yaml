@@ -1,5 +1,5 @@
 team:
-   name: <nombre del equipo>
+   name: CIDB
    members:
       - user: CBarreiro22
         percentage: 25
@@ -16,7 +16,7 @@ user-management:
   authors:
     - CBarreiro22
 post-management:
-  folder: david-lyon-uniandes
+  folder: posts
   port: 3001
   authors:
     - david-lyon-uniandes
