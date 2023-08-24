@@ -111,11 +111,9 @@ def get_token(value):
         return None
 
 def is_valid_token(value):
-    #token = '123'
-    # url = f"{USERS_PATH}/users/me"
-    # respuesta = requests.get(url, headers={"Authorization": token})
-    # resultado = respuesta.json()
-    return True
+    url = f"{USERS_PATH}/users/me"
+    respuesta = requests.get(url, headers={"Authorization": value})
+    return respuesta.status_code == 200
 
 def is_valid_uuid(value):
     try:
@@ -125,9 +123,6 @@ def is_valid_uuid(value):
         return False
 
 def is_valid_date_route(start_date, end_date):
-    #try:
     if start_date< datetime.now().isoformat() or start_date>end_date:
         return False
     return True
-    #except ValueError:
-    #    return False
