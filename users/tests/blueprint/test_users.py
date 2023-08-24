@@ -61,25 +61,7 @@ class TestUserOperations:
         response_data = response.json['mssg']
         assert 'El usuario ya existe' in response_data
 
-    def test_update_user(self, test_client):
-        create_data = {
-            "username": "testuser2",
-            "password": "testpassword2",
-            "email": "test2@example.com",
-            "dni": "12345678",
-            "fullName": "Test User",
-            "phoneNumber": "123456789"
-        }
-        response = test_client.post('/users', json=create_data)
-        user_id = response.json["id"]
-
-        # Fetch the user to ensure the updates were applied
-        login_data = {
-            "username": "testuser2",
-            "password": "testpassword2"
-        }
-        token_response = test_client.post('/users/auth', json=login_data)
-        token = token_response.json["token"]
+    def test_update_user(self, test_client,user_id,token):
 
         headers = {
             "Authorization": f"Bearer {token}"
@@ -104,7 +86,6 @@ class TestUserOperations:
         assert user_data["fullName"] == update_data["fullName"]
         assert user_data["phoneNumber"] == update_data["phoneNumber"]
 
-    # ... (Other test methods)
 
     def test_get_user_info(self, test_client, user_me_response):  # Create a test user first
 
@@ -132,14 +113,7 @@ class TestUserOperations:
         response_data = response.json
         assert "msg" in response_data
 
-        # You can also add additional assertions to ensure that the database is actually empty
-        # after the reset. This depends on how your database setup and testing environment work.
-        # For example, if you are using SQLAlchemy and an in-memory SQLite database, you can
-        # do something like this:
-
-        # Check if the Users table is empty after the reset
         with app.app_context():
             user_count = db_session.query(Users).count()
             assert user_count == 0
-        # Check if the session is closed after the reset
-        # assert db_session.is_active == False
+
