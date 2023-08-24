@@ -29,8 +29,6 @@ def init_db():
 
 
 # Define a base class for models with common attributes
-print("estoy en model")
-
 
 class Model(Base):
     __abstract__ = True
