@@ -21,25 +21,10 @@ jobs:
     - name: Pruebas y coverage
       id: cubrimiento
       run: |
-        if [ -d offers/tests ]; then
             pipenv run pytest --cov=offers/src -v offers/tests/* -s --cov-fail-under=70
-        fi
-        
-        if [ -d users/tests ]; then
             pipenv run pytest --cov=users/src  -v users/tests/* -s --cov-fail-under=70
-        fi
-        
-        if [ -d posts/tests ]; then
             pipenv run pytest --cov=posts/src -v posts/tests/* -s --cov-fail-under=70
-        fi
-        
-        if [ -d routes/tests ]; then
             pipenv run pytest --cov=routes/src  -v routes/tests/* -s --cov-fail-under=70
-        fi
-        if [ -d calculator/tests ]; then
-            pipenv run pytest --cov=calculator/src  -v calculator/tests/* -s --cov-fail-under=70
-        fi
-
   automerge:
       name: Mezcla rama -> main
       needs: job1
