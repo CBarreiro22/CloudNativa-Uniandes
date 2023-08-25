@@ -8,11 +8,23 @@ import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-# Load environment variables from the .env.development file
-loaded = load_dotenv('.env.development')
+ENV = None
 
-# Create a SQLAlchemy engine using environment variables for database connection
-engine = create_engine(os.environ['DATABASE_URL'])
+try:
+    ENV = os.getenv('ENV')
+
+except KeyError:
+    print("no testing mode")
+
+if not ENV is None and ENV == 'test':
+
+    engine = create_engine('sqlite:///:memory:')
+    # Load environment variables from the .env.development file
+else:
+    loaded = load_dotenv('./users/.env.development')
+    # Create a SQLAlchemy engine using environment variables for database connection
+    engine = create_engine(
+        f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}')
 
 # Create a scoped database session
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))

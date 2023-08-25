@@ -1,11 +1,10 @@
-from importlib.resources import path
 import unittest
-from wsgiref import headers
-import requests
+from datetime import datetime
 from unittest.mock import patch
+
 from src.main import app
-import json
 from src.models.model import db_session
+
 
 class TestRoutesOperations(unittest.TestCase):
     def setUp(self):
@@ -157,8 +156,8 @@ class TestRoutesOperations(unittest.TestCase):
             'destinyAirportCode': 'test',
             'destinyCountry': 'test',
             'bagCost': "ss",
-            'plannedStartDate': '2023-11-01',
-            'plannedEndDate': '2023-11-01'
+            'plannedStartDate': "2024-10-06T21:20:53.214Z",
+            'plannedEndDate': "2024-11-06T21:20:53.214Z"
         })
         statuscode = response.status_code
         self.assertEqual(statuscode, 500)
@@ -183,6 +182,7 @@ class TestRoutesOperations(unittest.TestCase):
     def test_consult_route(self, mocked):
         mocked.return_value.status_code = 200
         tester = app.test_client(self)
+
         response_create = tester.post("/routes", headers={"Authorization": 'FAKE_TOKEN'}, json={
             'flightId': '5',
             'sourceAirportCode': 'MX01',
@@ -190,8 +190,8 @@ class TestRoutesOperations(unittest.TestCase):
             'destinyAirportCode': 'CO01',
             'destinyCountry': 'COLOMBIA',
             'bagCost': 1234.56,
-            'plannedStartDate': '2024-01-01',
-            'plannedEndDate': '2024-01-01'
+            'plannedStartDate': "2024-10-06T21:20:53.214Z",
+            'plannedEndDate': "2024-11-06T21:20:53.214Z"
         })
         response = tester.get(f"/routes/{response_create.json['id']}",headers={"Authorization": "FAKE_TOKEN"})
         statuscode = response.status_code
@@ -224,8 +224,8 @@ class TestRoutesOperations(unittest.TestCase):
             'destinyAirportCode': 'CO01',
             'destinyCountry': 'COLOMBIA',
             'bagCost': 1234.56,
-            'plannedStartDate': '2024-01-01',
-            'plannedEndDate': '2024-01-01'
+            'plannedStartDate': "2024-10-06T21:20:53.214Z",
+            'plannedEndDate': "2024-11-06T21:20:53.214Z"
         })
         response = tester.delete(f"/routes/{response_create.json['id']}", headers={"Authorization": 23})
         statuscode = response.status_code

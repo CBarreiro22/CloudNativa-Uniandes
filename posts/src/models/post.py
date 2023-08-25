@@ -12,10 +12,11 @@ class Post(Model, Base):
     createdAt = Column(DateTime)
 
     def __init__(self, route_id, user_id, expire_at):
-        Model.__init__(self)
+
         self.routeId = route_id
         self.userId = user_id
         self.expireAt = expire_at
+        super().__init__()
 
 
 class PostJsonSchema(Schema):

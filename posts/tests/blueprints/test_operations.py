@@ -20,8 +20,9 @@ class TestOperations(unittest.TestCase):
         mock_get_user_info.return_value = 'test_user_id'
 
         future_datetime = datetime.now(timezone.utc) + timedelta(days=1)
-        formatted_expire_at = future_datetime.strftime('%Y-%m-%dT%H:%M:%S.%f') + 'Z'
 
+        #formatted_expire_at = future_datetime.strftime('%Y-%m-%dT%H:%M:%S.%f') + 'Z'
+        formatted_expire_at = future_datetime.isoformat()
         response = self.tester.post("/posts", json={
             'routeId': 'fnajkdkjawDKJWAndlkaw',
             'expireAt': formatted_expire_at

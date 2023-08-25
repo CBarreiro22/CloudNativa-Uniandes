@@ -74,7 +74,7 @@ def require_token(func):
 def create_post():
     json = request.get_json()
     user_id = request.user_id
-    post_entity = Post(json.get("routeId"), user_id, json.get("expireAt"))
+    post_entity = Post(json.get("routeId"), user_id, datetime.fromisoformat(json.get("expireAt")))
     db_session.add(post_entity)
     db_session.commit()
 
@@ -114,7 +114,7 @@ def delete_post(id):
     db_session.commit()
 
     return jsonify({
-        "msg": "la publicación fue eliminada"
+        "msg": "La publicación fue eliminada"
     }), 200
 
 

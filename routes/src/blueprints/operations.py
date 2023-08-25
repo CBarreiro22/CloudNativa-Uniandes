@@ -11,6 +11,8 @@ from src.models.route import Route
 from flask import Flask, Blueprint, request, jsonify
 from src.models.model import db_session, init_db, reset_db
 
+ISO_FORMATTER = "%Y-%m-%dT%H:%M:%S.%fZ"
+
 loaded = load_dotenv('.env.development')
 operations_blueprint = Blueprint('operations', __name__)
 USERS_PATH = os.environ["USERS_PATH"]
@@ -21,31 +23,45 @@ route_schema = RouteJsonSchema()
 #1. Creación de trayecto
 @operations_blueprint.route('/routes', methods=['POST'])
 def create_route():
-    get_token(request)   
-    json = request.get_json()
-    flight_id=json.get('flightId')
-    source_airport_code= json.get('sourceAirportCode')
-    source_country=json.get('sourceCountry')
-    destiny_airport_code=json.get('destinyAirportCode')
-    destiny_country=json.get('destinyCountry')
-    bag_cost=float( json.get('bagCost'))
-    planned_start_date=json.get('plannedStartDate')
-    planned_end_date=json.get('plannedEndDate')
-    if flight_id is None or source_airport_code is None or source_country is None or destiny_airport_code is None or destiny_country is None or bag_cost is None or planned_start_date is None or planned_end_date is None:
-        return '', 400
-    if not is_valid_date_route(planned_start_date,planned_end_date):
-        return jsonify({ "msg": "Las fechas del trayecto no son válidas"}), 412
-    result=Route.query.filter(Route.flightId == flight_id).first()
-    if result is not None:
-        return '', 412
-    route_entity = Route(flight_id, source_airport_code, source_country,
-                         destiny_airport_code, destiny_country, bag_cost, planned_start_date, planned_end_date)
-    db_session.add(route_entity)
-    db_session.commit()
-    return jsonify({
-            "id": route_entity.id,
-        "createdAt": route_entity.createdAt.isoformat()}
-    ), 201
+    try:
+
+        get_token(request)
+        json = request.get_json()
+        flight_id = json.get('flightId')
+        source_airport_code= json.get('sourceAirportCode')
+        source_country=json.get('sourceCountry')
+        destiny_airport_code=json.get('destinyAirportCode')
+        destiny_country=json.get('destinyCountry')
+        bag_cost=float( json.get('bagCost'))
+        planned_start_date_str=json.get('plannedStartDate')
+        planned_end_date_str=json.get('plannedEndDate')
+
+        if flight_id is None or source_airport_code is None or source_country is None or destiny_airport_code is None or destiny_country is None or bag_cost is None or planned_start_date_str is None or planned_end_date_str is None:
+            return '', 400
+
+        planned_start_date = datetime.strptime(planned_start_date_str, ISO_FORMATTER)
+        planned_end_date = datetime.strptime(planned_end_date_str, ISO_FORMATTER)
+
+
+        if not is_valid_date_route(planned_start_date,planned_end_date):
+            return jsonify({ "msg": "Las fechas del trayecto no son válidas"}), 412
+        result=Route.query.filter(Route.flightId == flight_id).first()
+        if result is not None:
+            return '', 412
+        route_entity = Route(flight_id, source_airport_code, source_country,
+                             destiny_airport_code, destiny_country, bag_cost, planned_start_date, planned_end_date)
+        db_session.add(route_entity)
+        db_session.commit()
+        return jsonify({
+                "id": route_entity.id,
+            "createdAt": route_entity.createdAt.isoformat()}
+        ), 201
+    except ValueError as e:
+        error_data = {
+            'error': 'Invalid date format',
+            'message': str(e)
+        }
+        return jsonify(error_data), 412
 
 #2. Ver y filtrar trayectos
 @operations_blueprint.route('/routes', methods=['GET'])
@@ -123,6 +139,8 @@ def is_valid_uuid(value):
         return False
 
 def is_valid_date_route(start_date, end_date):
-    if start_date< datetime.now().isoformat() or start_date>end_date:
+    if start_date < datetime.now()  or end_date < datetime.now():
+        return False
+    if end_date < start_date:
         return False
     return True

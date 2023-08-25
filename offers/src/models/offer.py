@@ -1,5 +1,7 @@
 from marshmallow import fields, Schema
-from sqlalchemy import Column, String, DateTime, Boolean, Integer
+from sqlalchemy import Column, String, Boolean, Integer
+from sqlalchemy_utils import UUIDType
+
 from .model import Model
 
 
@@ -23,7 +25,7 @@ class OfferJsonSchema(Schema):
 class Offer(Model):
     __tablename__ = 'offer'
 
-    postId = Column(String, primary_key=True, doc="id de la publicación")
+    postId = Column(UUIDType(binary=False),  doc="id de la publicación")
     userId = Column(String, doc="identificador del usuario que realizó la oferta")
     description = Column(String(length=140), doc="descripción de no más de 140 caracteres sobre el paquete a llevar.")
     size = Column(String, name='size',

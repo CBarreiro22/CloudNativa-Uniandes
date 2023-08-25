@@ -1,14 +1,29 @@
-import uuid
 import os
+import uuid
 from datetime import datetime
+
+from dotenv import load_dotenv
 from sqlalchemy import Column, DateTime, create_engine
 from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
-from sqlalchemy.dialects.postgresql import UUID
-from dotenv import load_dotenv
+from sqlalchemy_utils import UUIDType
 
-loaded = load_dotenv('.env.development')
+ENV = None
 
-engine= create_engine(f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}')
+try:
+    ENV = os.getenv('ENV')
+
+except KeyError:
+    print("no testing mode")
+
+if not ENV is None and ENV == 'test':
+
+    engine = create_engine('sqlite:///:memory:')
+else:
+    loaded = load_dotenv('./posts/.env.development')
+    engine = create_engine(
+        f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}')
+
+
 db_session= scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 Base.query = db_session.query_property()
@@ -25,8 +40,8 @@ def reset_db():
 
 
 class Model():
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    createdAt = Column(DateTime)
+    id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
+    createdAt = Column(DateTime, default=datetime.utcnow)
 
     def __init__(self):
-        self.createdAt = datetime.now().isoformat()
+        self.createdAt = datetime.utcnow()
