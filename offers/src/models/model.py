@@ -1,18 +1,20 @@
 import os
 import uuid
 from datetime import datetime
-
+from sqlalchemy_utils import UUIDType
 from dotenv import load_dotenv
 from sqlalchemy import String, Integer, DateTime, Boolean, UUID, create_engine, Column
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
 
+if not os.environ['ENV'] is 'development' :
 # Load environment variables from the .env.development file
-loaded = load_dotenv('./offers/.env.development')
+    loaded = load_dotenv('./offers/.env.development')
 
 # Create a SQLAlchemy engine using environment variables for database connection
-engine = create_engine(
-    f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}')
-
+    engine = create_engine(
+        f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}')
+else:
+    engine = create_engine('sqlite:///:memory:')
 # Create a scoped database session
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
@@ -29,7 +31,7 @@ class Model(Base):
     __abstract__ = True
 
     # Common attributes for all models
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     createdAt = Column(DateTime, default=datetime.utcnow)
 
 

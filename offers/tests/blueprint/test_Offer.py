@@ -3,7 +3,7 @@ import unittest
 import uuid
 from unittest.mock import patch
 
-import setuptools
+
 from faker import Faker
 
 from offers.src.main import app
