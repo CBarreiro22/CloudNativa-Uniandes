@@ -42,6 +42,7 @@ jobs:
       - name: Run the API and Postman's tests
         run: | 
           newman run ".evaluator/entrega1.json" --verbose
+          docker ps
           docker logs evaluator_users_1
   evaluate_routes:
     runs-on: ubuntu-latest
