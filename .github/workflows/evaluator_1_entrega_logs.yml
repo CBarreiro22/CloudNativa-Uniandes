@@ -1,4 +1,4 @@
-name: Evaluator_Entrega1
+name: Evaluator_Entrega1_logs
 on: workflow_dispatch
 jobs:
   evaluate_users:
