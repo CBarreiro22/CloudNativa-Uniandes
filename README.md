@@ -348,4 +348,4 @@ Esto iniciará la ejecución del workflow en la rama. Si todo funciona correctam
 <img src="https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/proyecto-202314-base/assets/78829363/c6c580b2-80e0-411d-8971-a252312ce5ea" alt="Screenshot" width="800">
 
 
-Version 1.0
+Version 1.1

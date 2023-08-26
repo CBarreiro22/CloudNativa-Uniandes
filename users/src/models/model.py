@@ -1,12 +1,12 @@
 import os
+import uuid
 from datetime import datetime
 
 from dotenv import load_dotenv
 from sqlalchemy import Column, DateTime, create_engine, String
 from sqlalchemy.orm import declarative_base
-import uuid
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy_utils import UUIDType
 
 ENV = None
 
@@ -36,7 +36,7 @@ Base.query = db_session.query_property()
 
 # Initialize the database schema
 def init_db():
-    print("Voy a inicializar con engine")
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
 
@@ -46,9 +46,9 @@ class Model(Base):
     __abstract__ = True
 
     # Common attributes for all models
-    id = Column(String(36), primary_key=True, default=str(uuid.uuid4()))
+    id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     createdAt = Column(DateTime, default=datetime.utcnow)
-    updatedAt = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updatedAt = Column(DateTime, default=datetime.utcnow)
 
     def __init__(self):
         # Set the creation and update timestamps

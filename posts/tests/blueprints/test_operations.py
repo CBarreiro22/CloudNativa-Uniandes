@@ -57,7 +57,7 @@ class TestOperations(unittest.TestCase):
         response = self.tester.delete(f"/posts/{test_post.id}",
                                       headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json, {"msg": "La publicación fue eliminada"})
+        self.assertEqual(response.json, {"msg": "la publicación fue eliminada"})
 
     @patch('src.commands.user_service.UserService.get_user_information')
     def test_get_post(self, mock_get_user_info):
