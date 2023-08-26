@@ -71,10 +71,8 @@ def addOffer() -> object:
                           size=size,
                           fragile=parse_bool(fragile),
                           offer=int(offer)).execute()
-    offer_schema = newOfferResponseJsonSchema()
-    offer_data = offer_schema.dump(offer_result)
 
-    return jsonify(offer_data),201
+    return jsonify(offer_result), 201
 
 
 @offer_blueprint.route('/offers', methods=['GET'])
@@ -91,7 +89,7 @@ def get_offers():
         offers_list = OffersOperations().execute()
     else:
         offers_list = OffersOperations(user_id=owner,
-                                   post_id=post_id).execute()
+                                       post_id=post_id).execute()
     offer_schema = OfferJsonSchema()
     offers_data = [offer_schema.dump(r) for r in offers_list]
     return jsonify(offers_data)

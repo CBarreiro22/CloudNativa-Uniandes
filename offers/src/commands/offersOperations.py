@@ -40,23 +40,25 @@ class OffersOperations(BaseCommand):
         return Offer.query.filter_by(id=self.offer_id).first()
 
     def delete_offer(self):
-        offer = self.get_offer_by_id()
-        if not offer:
-            raise no_offer_found
-        db_session.delete(offer)
-        db_session.commit()
+        with db_session() as session:
+            offer = self.get_offer_by_id()
+            if not offer:
+                raise no_offer_found
+            session.delete(offer)
+            session.commit()
         return True
 
     def reset(self):
-        try:
+        with db_session() as session:
+            try:
 
-            db_session.query(Offer).delete()
-            db_session.commit()
+                session.query(Offer).delete()
+                session.commit()
 
-            return jsonify({"msg": "Todos los datos fueron eliminados"}), 200
-        except Exception as e:
-            db_session.rollback()
-            return jsonify({"message": "An error occurred while deleting offers"}), 500
+                return jsonify({"msg": "Todos los datos fueron eliminados"}), 200
+            except Exception as e:
+                session.rollback()
+                return jsonify({"message": "An error occurred while deleting offers"}), 500
 
     def execute(self):
         if not self.offer_id is None and not self.operation == DELETE:
