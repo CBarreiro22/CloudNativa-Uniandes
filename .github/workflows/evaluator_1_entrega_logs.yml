@@ -41,8 +41,8 @@ jobs:
           retry-all: true
       - name: Run the API and Postman's tests
         run: | 
-          docker ps
           newman run ".evaluator/entrega1.json" --verbose
+          docker logs evaluator_users_1
   evaluate_routes:
     runs-on: ubuntu-latest
     steps:
@@ -162,7 +162,9 @@ jobs:
           retry-delay: 3s
           retry-all: true
       - name: Run the API and Postman's tests
-        run: newman run ".evaluator/entrega1.json" --verbose
+        run: |
+          newman run ".evaluator/entrega1.json" --verbose
+          docker logs evaluator_offers_1
   evaluate_networks:
     runs-on: ubuntu-latest
     steps:
