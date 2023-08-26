@@ -19,7 +19,7 @@ if not ENV is None and ENV == 'test':
 
     engine = create_engine('sqlite:///:memory:')
 else:
-    loaded = load_dotenv('./offers/.env.development')
+    loaded = load_dotenv('.env.development')
 
     engine = create_engine(
         f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}')
