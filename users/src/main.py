@@ -11,6 +11,6 @@ app.register_blueprint(users_blueprint)
 def handle_exception(err):
     response = {
       "mssg": err.description,
-      "version": os.environ["VERSION"]
+      "version": "1.0"
     }
     return jsonify(response), err.code
