@@ -47,16 +47,20 @@ def create_user():
         dni=dni,
         full_name=fullname
     )
+    try:
+        user = db_session.add(nuevo_usuario)
 
-    user = db_session.add(nuevo_usuario)
+        db_session.commit()
 
-    db_session.commit()
+        response = {
+            "id": str(nuevo_usuario.id),
+            "createdAt": nuevo_usuario.createdAt.isoformat()
+        }
+        return jsonify(response), 201
+    except ValueError as e:
+        print(e)
+        raise UserExistError
 
-    response = {
-        "id": str(nuevo_usuario.id),
-        "createdAt": nuevo_usuario.createdAt.isoformat()
-    }
-    return jsonify(response), 201
 
 
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])

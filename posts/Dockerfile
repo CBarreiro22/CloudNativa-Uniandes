@@ -1,5 +1,5 @@
 # Utilizamos la imagen base de Python 3.10
-FROM python:3.9
+FROM python:3.10-alpine
 
 # Establecemos el directorio de trabajo dentro del contenedor
 WORKDIR /posts
