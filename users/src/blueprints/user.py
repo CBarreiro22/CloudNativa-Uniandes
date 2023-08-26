@@ -1,12 +1,14 @@
 import hashlib
+import uuid
+from datetime import datetime, timedelta
+from operator import or_
 
 from flask import jsonify, request, Blueprint
-from datetime import datetime, timedelta
-import uuid
+
 from ..errors.errors import TokenNotHeaderError, InsufficientDataError, \
     UserExistError, UserNotFound, InvalidCredentialsError, InternalServerError
-from ..models.user import Users
 from ..models.model import db_session, init_db
+from ..models.user import Users
 
 # Crear el Blueprint para la gestión de usuarios
 users_blueprint = Blueprint('users', __name__)
@@ -32,7 +34,7 @@ def create_user():
     password_encoded = password.encode('utf-8')
     password_encriptado = hashlib.sha256(password_encoded).hexdigest()
 
-    user = db_session.query(Users).filter_by(username=username, email=email).first()
+    user = db_session.query(Users).filter(or_(Users.username == username, Users.email == email)).first()
     if not user is None:
         raise UserExistError
 
@@ -48,7 +50,6 @@ def create_user():
 
     user = db_session.add(nuevo_usuario)
 
-
     db_session.commit()
 
     response = {
@@ -56,6 +57,7 @@ def create_user():
         "createdAt": nuevo_usuario.createdAt.isoformat()
     }
     return jsonify(response), 201
+
 
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
 def update_user(user_id):
@@ -85,7 +87,6 @@ def update_user(user_id):
         user.phone_number = data["phoneNumber"]
 
     db_session.commit()
-
 
     return jsonify({"msg": "el usuario ha sido actualizado"}), 200
 
@@ -118,9 +119,9 @@ def generate_token():
     expire_at = datetime.utcnow() + timedelta(hours=1)
     user.expireAt = expire_at
     user.token = token
-    #if user.token is not None:
+    # if user.token is not None:
     #    user.status = "VERIFICADO"
-    #else:
+    # else:
     #    user.status = "POR_VERIFICAR"
     db_session.commit()
 
@@ -129,7 +130,6 @@ def generate_token():
         "token": token,
         "expireAt": expire_at.isoformat()
     }
-
 
     return jsonify(response), 200
 
@@ -179,6 +179,5 @@ def reset_database():
 
     # Realizar commit y cerrar la sesión
     db_session.commit()
-
 
     return jsonify({"msg": "Todos los datos fueron eliminados"}), 200
