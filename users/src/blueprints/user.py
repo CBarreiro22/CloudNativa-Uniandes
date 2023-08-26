@@ -32,6 +32,10 @@ def create_user():
     password_encoded = password.encode('utf-8')
     password_encriptado = hashlib.sha256(password_encoded).hexdigest()
 
+    user = db_session.query(Users).filter_by(username=username, email=email).first()
+    if not user is None:
+        raise UserExistError
+
     nuevo_usuario = Users(
         username=username,
         password=password,
@@ -41,24 +45,17 @@ def create_user():
         dni=dni,
         full_name=fullname
     )
-    try:
-        db_session.add(nuevo_usuario)
-        db_session.commit()
 
-        user = db_session.query(Users).filter_by(username=username).first()
+    user = db_session.add(nuevo_usuario)
 
-        response = {
-            "id": str(user.id),
-            "createdAt": user.createdAt.isoformat()
-        }
 
-        db_session.close()
+    db_session.commit()
 
-        return jsonify(response), 201
-    except:
-        db_session.rollback()
-        raise UserExistError("El usuario ya existe")
-
+    response = {
+        "id": str(nuevo_usuario.id),
+        "createdAt": nuevo_usuario.createdAt.isoformat()
+    }
+    return jsonify(response), 201
 
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
 def update_user(user_id):

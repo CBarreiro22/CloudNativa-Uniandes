@@ -29,7 +29,7 @@ class UserNotFound(ApiError):
 
 class UserExistError(ApiError):
     code = 412
-    description = "User already exists"
+    description = "El usuario ya existe"
 
 
 class InternalServerError(ApiError):
