@@ -1,16 +1,17 @@
+import os
+
 from dotenv import load_dotenv
-
-from .blueprints.operations import operations_blueprint
-
-loaded = load_dotenv('.env.development')
 
 from flask import Flask, jsonify
 
+from .blueprints.offer import offer_blueprint
 from .errors.errors import ApiError
-import os
 
 app = Flask(__name__)
-app.register_blueprint(operations_blueprint)
+app.register_blueprint(offer_blueprint)
+
+
+loaded = load_dotenv('.env.development')
 
 
 @app.errorhandler(ApiError)

@@ -1,4 +1,85 @@
 # proyecto-202314  
+    .
+    ├── LICENSE
+    ├── Pipfile
+    ├── Pipfile.lock
+    ├── README.md
+    ├── __pycache__
+    ├── archivos.txt
+    ├── calculator
+    │   ├── src
+    │   │   ├── __init__.py
+    │   │   ├── __pycache__
+    │   │   │   ├── __init__.cpython-311.pyc
+    │   │   │   ├── __init__.cpython-39.pyc
+    │   │   │   └── main.cpython-39.pyc
+    │   │   ├── blueprints
+    │   │   │   ├── __pycache__
+    │   │   │   │   └── operations.cpython-39.pyc
+    │   │   │   └── operations.py
+    │   │   ├── commands
+    │   │   │   ├── __init__.py
+    │   │   │   ├── __pycache__
+    │   │   │   │   ├── __init__.cpython-39.pyc
+    │   │   │   │   ├── base_command.cpython-39.pyc
+    │   │   │   │   ├── divide.cpython-39.pyc
+    │   │   │   │   ├── multiply.cpython-39.pyc
+    │   │   │   │   └── sum.cpython-39.pyc
+    │   │   │   ├── base_command.py
+    │   │   │   ├── divide.py
+    │   │   │   ├── multiply.py
+    │   │   │   └── sum.py
+    │   │   ├── errors
+    │   │   │   ├── __init__.py
+    │   │   │   ├── __pycache__
+    │   │   │   │   ├── __init__.cpython-39.pyc
+    │   │   │   │   └── errors.cpython-39.pyc
+    │   │   │   └── errors.py
+    │   │   ├── main.py
+    │   │   └── models
+    │   │       ├── __init__.py
+    │   │       └── model.py
+    │   └── tests
+    │       ├── __init__.py
+    │       ├── blueprints
+    │       │   ├── __pycache__
+    │       │   └── test_operations.py
+    ├── docker-compose.yml
+    ├── offers
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── __init__.py
+    │   ├── app.log
+    │   ├── file.py
+    │   ├── requirements.txt
+    │   ├── src
+    │   │   ├── __init__.py
+    │   │   ├── blueprints
+    │   │   │   ├── __init__.py
+    │   │   │   └── offer.py
+    │   │   ├── commands
+    │   │   │   ├── __init__.py
+    │   │   │   ├── base_command.py
+    │   │   │   ├── offers.py
+    │   │   │   ├── offersOperations.py
+    │   │   │   └── userService.py
+    │   │   ├── errors
+    │   │   │   ├── __init__.py
+    │   │   │   └── errors.py
+    │   │   ├── main.py
+    │   │   └── models
+    │   │       ├── __init__.py
+    │   │       ├── model.py
+    │   │       └── offer.py
+    │   ├── tests
+    │   │   ├── __init__.py
+    │   │   ├── blueprint
+    │   │   │   ├── test_Offer.py
+    │   │   │   └── test_user_mock_service.py
+    │   │   ├── commands
+    │   │   │   └── __init__.py
+    │   │   └── conftest.py
 
 ## Tabla de contenido
 
@@ -265,3 +346,6 @@ Luego, encontrarás en la sección izquierda una lista de todos los flujos de tr
 Esto iniciará la ejecución del workflow en la rama. Si todo funciona correctamente y la entrega es correcta, verás que todas las comprobaciones aparecen como aprobadas (passed).
 
 <img src="https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/proyecto-202314-base/assets/78829363/c6c580b2-80e0-411d-8971-a252312ce5ea" alt="Screenshot" width="800">
+
+
+Version 1.0
