@@ -85,7 +85,7 @@ def update_user(user_id):
         user.phone_number = data["phoneNumber"]
 
     db_session.commit()
-    db_session.close()
+
 
     return jsonify({"msg": "el usuario ha sido actualizado"}), 200
 
@@ -129,7 +129,7 @@ def generate_token():
         "token": token,
         "expireAt": expire_at.isoformat()
     }
-    db_session.close()
+
 
     return jsonify(response), 200
 
@@ -179,6 +179,6 @@ def reset_database():
 
     # Realizar commit y cerrar la sesión
     db_session.commit()
-    db_session.close()
+
 
     return jsonify({"msg": "Todos los datos fueron eliminados"}), 200
