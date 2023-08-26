@@ -41,7 +41,7 @@ jobs:
           retry-all: true
       - name: Run the API and Postman's tests
         run: newman run ".evaluator/entrega1.json" --verbose
-      - name: revisar logs docker
+      - name: revisar logs docker en users
         run: docker logs s202314-proyecto-grupo11-users-1
   evaluate_routes:
     runs-on: ubuntu-latest
@@ -83,7 +83,7 @@ jobs:
           retry-all: true
       - name: Run the API and Postman's tests
         run: newman run ".evaluator/entrega1.json" --verbose
-      - name: revisar logs docker
+      - name: revisar logs docker en offers
         run: docker logs s202314-proyecto-grupo11-offers-1
   evaluate_posts:
     runs-on: ubuntu-latest
