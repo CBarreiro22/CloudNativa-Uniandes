@@ -14,7 +14,7 @@ operations_blueprint = Blueprint('operations', __name__)
 
 init_db()
 post_schema = PostJsonSchema()
-
+ISO_FORMATTER = "%Y-%m-%dT%H:%M:%S.%fZ"
 
 def is_invalid_iso8601_or_past(date):
     if isinstance(date, str):
@@ -74,7 +74,9 @@ def require_token(func):
 def create_post():
     json = request.get_json()
     user_id = request.user_id
-    post_entity = Post(json.get("routeId"), user_id, datetime.fromisoformat(json.get("expireAt")))
+    expire_at_date = parse_iso_date(json.get("expireAt"))
+
+    post_entity = Post(route_id=json.get("routeId"), user_id=user_id, expire_at=expire_at_date)
     db_session.add(post_entity)
     db_session.commit()
 
@@ -114,7 +116,7 @@ def delete_post(id):
     db_session.commit()
 
     return jsonify({
-        "msg": "La publicación fue eliminada"
+        "msg": "la publicación fue eliminada"
     }), 200
 
 
@@ -181,3 +183,15 @@ def reset_database():
 @operations_blueprint.route('/posts/ping', methods=['GET'])
 def check_health():
     return 'pong', 200
+def parse_iso_date(date_str):
+    try:
+        return datetime.strptime(date_str, ISO_FORMATTER)
+    except ValueError:
+        return None
+
+def is_valid_date_route(start_date, end_date):
+    if start_date < datetime.now()  or end_date < datetime.now():
+        return False
+    if end_date < start_date:
+        return False
+    return True
