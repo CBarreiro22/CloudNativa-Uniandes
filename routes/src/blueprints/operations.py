@@ -37,8 +37,8 @@ def create_route():
         if flight_id is None or source_airport_code is None or source_country is None or destiny_airport_code is None or destiny_country is None or bag_cost is None or planned_start_date_str is None or planned_end_date_str is None:
             return '', 400
 
-        planned_start_date = parse_iso_date(planned_start_date_str)# datetime.strptime(planned_start_date_str, ISO_FORMATTER)
-        planned_end_date = parse_iso_date(planned_end_date_str) #datetime.strptime(planned_end_date_str, ISO_FORMATTER)
+        planned_start_date = parse_iso_date(planned_start_date_str)
+        planned_end_date = parse_iso_date(planned_end_date_str) 
 
 
         if planned_start_date is None or planned_end_date is None or not is_valid_date_route(planned_start_date,planned_end_date):
