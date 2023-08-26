@@ -18,6 +18,6 @@ loaded = load_dotenv('.env.development')
 def handle_exception(err):
     response = {
         "mssg": err.description,
-        "version": os.environ["VERSION"]
+        #"version": os.environ["VERSION"]
     }
     return jsonify(response), err.code
