@@ -24,7 +24,7 @@ else:
     loaded = load_dotenv('./users/.env.development')
     # Create a SQLAlchemy engine using environment variables for database connection
     engine = create_engine(
-        f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}')
+        f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}',pool_size=20)
 
 # Create a scoped database session
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
