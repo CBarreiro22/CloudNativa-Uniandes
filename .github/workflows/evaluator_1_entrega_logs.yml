@@ -1,4 +1,4 @@
-name: Evaluator_Entrega1
+name: Evaluator_Entrega1_logs
 on: workflow_dispatch
 jobs:
   evaluate_users:
@@ -40,9 +40,9 @@ jobs:
           retry-delay: 3s
           retry-all: true
       - name: Run the API and Postman's tests
-        run: newman run ".evaluator/entrega1.json" --verbose
-      - name: revisar logs docker en users
-        run: docker logs s202314-proyecto-grupo11-users-1
+        run: | 
+          docker ps
+          newman run ".evaluator/entrega1.json" --verbose
   evaluate_routes:
     runs-on: ubuntu-latest
     steps:
@@ -83,8 +83,6 @@ jobs:
           retry-all: true
       - name: Run the API and Postman's tests
         run: newman run ".evaluator/entrega1.json" --verbose
-      - name: revisar logs docker en offers
-        run: docker logs s202314-proyecto-grupo11-offers-1
   evaluate_posts:
     runs-on: ubuntu-latest
     steps:
