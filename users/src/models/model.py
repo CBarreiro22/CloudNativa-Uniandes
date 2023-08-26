@@ -1,12 +1,12 @@
 import os
+import uuid
 from datetime import datetime
 
 from dotenv import load_dotenv
 from sqlalchemy import Column, DateTime, create_engine, String
 from sqlalchemy.orm import declarative_base
-import uuid
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy_utils import UUIDType
 
 ENV = None
 
@@ -21,7 +21,7 @@ if not ENV is None and ENV == 'test':
     engine = create_engine('sqlite:///:memory:')
     # Load environment variables from the .env.development file
 else:
-    loaded = load_dotenv('./users/.env.development')
+    loaded = load_dotenv('.env.development')
     # Create a SQLAlchemy engine using environment variables for database connection
     engine = create_engine(
         f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}')
@@ -46,9 +46,9 @@ class Model(Base):
     __abstract__ = True
 
     # Common attributes for all models
-    id = Column(String(36), primary_key=True, default=str(uuid.uuid4()))
+    id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     createdAt = Column(DateTime, default=datetime.utcnow)
-    updatedAt = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updatedAt = Column(DateTime, default=datetime.utcnow)
 
     def __init__(self):
         # Set the creation and update timestamps
