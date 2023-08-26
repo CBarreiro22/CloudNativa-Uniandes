@@ -15,15 +15,15 @@ try:
 except KeyError:
     print("no testing mode")
 
-if not ENV is None and ENV == 'test':
-
+if ENV is not None and ENV == 'test':
     engine = create_engine('sqlite:///:memory:')
 else:
-    loaded = load_dotenv('./routes/.env.development')
+    loaded = load_dotenv('.env.development')
     engine = create_engine(
         f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}')
 
-db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+db_session = scoped_session(sessionmaker(
+    autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 Base.query = db_session.query_property()
 

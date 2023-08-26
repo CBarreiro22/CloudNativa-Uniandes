@@ -23,8 +23,6 @@ route_schema = RouteJsonSchema()
 #1. Creación de trayecto
 @operations_blueprint.route('/routes', methods=['POST'])
 def create_route():
-    try:
-
         get_token(request)
         json = request.get_json()
         flight_id = json.get('flightId')
@@ -39,11 +37,11 @@ def create_route():
         if flight_id is None or source_airport_code is None or source_country is None or destiny_airport_code is None or destiny_country is None or bag_cost is None or planned_start_date_str is None or planned_end_date_str is None:
             return '', 400
 
-        planned_start_date = datetime.strptime(planned_start_date_str, ISO_FORMATTER)
-        planned_end_date = datetime.strptime(planned_end_date_str, ISO_FORMATTER)
+        planned_start_date = parse_iso_date(planned_start_date_str)# datetime.strptime(planned_start_date_str, ISO_FORMATTER)
+        planned_end_date = parse_iso_date(planned_end_date_str) #datetime.strptime(planned_end_date_str, ISO_FORMATTER)
 
 
-        if not is_valid_date_route(planned_start_date,planned_end_date):
+        if planned_start_date is None or planned_end_date is None or not is_valid_date_route(planned_start_date,planned_end_date):
             return jsonify({ "msg": "Las fechas del trayecto no son válidas"}), 412
         result=Route.query.filter(Route.flightId == flight_id).first()
         if result is not None:
@@ -56,12 +54,6 @@ def create_route():
                 "id": route_entity.id,
             "createdAt": route_entity.createdAt.isoformat()}
         ), 201
-    except ValueError as e:
-        error_data = {
-            'error': 'Invalid date format',
-            'message': str(e)
-        }
-        return jsonify(error_data), 412
 
 #2. Ver y filtrar trayectos
 @operations_blueprint.route('/routes', methods=['GET'])
@@ -117,6 +109,7 @@ def reset_database():
 
 def get_token(value):
     try:
+        print(value)
         token= value.headers.get('Authorization') 
         if token is None:
             raise MissingToken
@@ -137,6 +130,12 @@ def is_valid_uuid(value):
         return True
     except ValueError:
         return False
+
+def parse_iso_date(date_str):
+    try:
+        return datetime.strptime(date_str, ISO_FORMATTER)
+    except ValueError:
+        return None
 
 def is_valid_date_route(start_date, end_date):
     if start_date < datetime.now()  or end_date < datetime.now():

@@ -24,8 +24,8 @@ class TestRoutesOperations(unittest.TestCase):
             'destinyAirportCode': 'CO01',
             'destinyCountry': 'COLOMBIA',
             'bagCost': 1234.56,
-            'plannedStartDate': '2024-01-01',
-            'plannedEndDate': '2024-01-01'
+            'plannedStartDate': '2024-10-06T21:20:53.214Z',
+            'plannedEndDate': '2024-10-06T21:20:53.214Z'
         })
         statuscode = response.status_code
         self.assertEqual(statuscode, 403)
@@ -57,8 +57,8 @@ class TestRoutesOperations(unittest.TestCase):
             'destinyAirportCode': 'CO01',
             'destinyCountry': 'COLOMBIA',
             'bagCost': 1234.56,
-            'plannedStartDate': '2024-01-01',
-            'plannedEndDate': '2023-01-01'
+            'plannedStartDate': '2024-10-06T21:20:53.214Z',
+            'plannedEndDate': '2023-10-06T21:20:53.214Z'
         })
         statuscode = response.status_code
         self.assertEqual(statuscode, 412)
@@ -74,7 +74,7 @@ class TestRoutesOperations(unittest.TestCase):
             'destinyAirportCode': 'CO01',
             'destinyCountry': 'COLOMBIA',
             'bagCost': 1234.56,
-            'plannedStartDate': '2024-01-01',
+            'plannedStartDate': '2024-10-06T21:20:53.214Z',
             'plannedEndDate': '2000-30'
         })
         statuscode = response.status_code
@@ -92,8 +92,8 @@ class TestRoutesOperations(unittest.TestCase):
             'destinyAirportCode': 'CO01',
             'destinyCountry': 'COLOMBIA',
             'bagCost': 1234.56,
-            'plannedStartDate': '2024-01-01',
-            'plannedEndDate': '2024-01-01'
+            'plannedStartDate': '2024-10-06T21:20:53.214Z',
+            'plannedEndDate': '2024-10-06T21:20:53.214Z'
         })
         response2 = tester.post("/routes", headers={"Authorization": 'FAKE_TOKEN'}, json={
             'flightId': '4',
@@ -102,8 +102,8 @@ class TestRoutesOperations(unittest.TestCase):
             'destinyAirportCode': 'CO01',
             'destinyCountry': 'COLOMBIA',
             'bagCost': 1234.56,
-            'plannedStartDate': '2024-01-01',
-            'plannedEndDate': '2024-01-01'
+            'plannedStartDate': '2024-10-06T21:20:53.214Z',
+            'plannedEndDate': '2024-10-06T21:20:53.214Z'
         })
         print(response1.status_code)
         statuscode1 = response1.status_code
@@ -139,8 +139,8 @@ class TestRoutesOperations(unittest.TestCase):
             'destinyAirportCode': 'test',
             'destinyCountry': 'test',
             'bagCost': 123,
-            'plannedStartDate': '2023-11-01',
-            'plannedEndDate': '2023-11-01'
+            'plannedStartDate': '2023-10-06T21:20:53.214Z',
+            'plannedEndDate': '2024-10-06T21:20:53.214Z'
         })
         statuscode = response.status_code
         self.assertEqual(statuscode, 201)
@@ -156,8 +156,8 @@ class TestRoutesOperations(unittest.TestCase):
             'destinyAirportCode': 'test',
             'destinyCountry': 'test',
             'bagCost': "ss",
-            'plannedStartDate': "2024-10-06T21:20:53.214Z",
-            'plannedEndDate': "2024-11-06T21:20:53.214Z"
+            'plannedStartDate': '2024-10-06T21:20:53.214Z',
+            'plannedEndDate': '2024-10-06T21:20:53.214Z'
         })
         statuscode = response.status_code
         self.assertEqual(statuscode, 500)
