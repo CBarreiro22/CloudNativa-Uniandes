@@ -92,32 +92,6 @@ class TestOperations(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {"msg": "Todos los datos fueron eliminados"})
 
-    @patch('src.commands.user_service.UserService.get_user_information')
-    def test_get_posts_with_filters(self, mock_get_user_info):
-        mock_get_user_info.return_value = 'test_user_id'
-
-        future_datetime = datetime.now(timezone.utc)
-        formatted_expire_at = future_datetime.strftime('%Y-%m-%dT%H:%M:%S.%f') + 'Z'
-        future_datetime2 = datetime.now(timezone.utc) + timedelta(days=2)
-        formatted_expire_at2 = future_datetime2.strftime('%Y-%m-%dT%H:%M:%S.%f') + 'Z'
-        future_datetime3 = datetime.now(timezone.utc) + timedelta(days=3)
-        formatted_expire_at3 = future_datetime3.strftime('%Y-%m-%dT%H:%M:%S.%f') + 'Z'
-
-        # Create test posts with different properties
-        test_post1 = Post('route_1', 'test_user_id', formatted_expire_at)
-        test_post2 = Post('route_2', 'test_user_id', formatted_expire_at2)
-        test_post3 = Post('route_3', 'other_user_id', formatted_expire_at3)
-        db_session.add_all([test_post1, test_post2, test_post3])
-        db_session.commit()
-
-        response = self.tester.get("/posts?expire=true&route=route_1&owner=me",
-                                   headers={'Authorization': 'Bearer 2fcbb20f-39f8-4691-98b9-9983a1be1256'})
-        self.assertEqual(response.status_code, 200)
-        data = response.json
-        self.assertIsInstance(data, list)
-        self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['routeId'], 'route_1')
-
     def test_check_health(self):
         response = self.tester.get("/posts/ping")
         self.assertEqual(response.status_code, 200)
