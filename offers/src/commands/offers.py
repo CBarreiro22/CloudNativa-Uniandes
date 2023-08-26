@@ -4,7 +4,7 @@ from enum import Enum
 from .base_command import BaseCommand
 from ..errors.errors import invalid_token, new_offer_business_errors
 from ..models.model import init_db, db_session
-from ..models.offer import Offer
+from ..models.offer import Offer, newOfferResponseJsonSchema
 
 init_db()
 class SizeEnum(Enum):
@@ -24,22 +24,23 @@ class Offers(BaseCommand):
     def add_offer(self):
         self.business_validation()
         try:
-            # Crear una instancia de la clase Offer
-            nueva_oferta = Offer(
-                postId=self.post_id,
-                userId=self.user_id,
-                description=self.description,
-                size=self.size,
-                fragile=self.fragile,
-                offer=self.offer
-            )
-            # Crear una sesión para interactuar con la base de datos
+            with db_session() as session:
+                nueva_oferta = Offer(
+                    postId=self.post_id,
+                    userId=self.user_id,
+                    description=self.description,
+                    size=self.size,
+                    fragile=self.fragile,
+                    offer=self.offer
+                )
+                # Crear una sesión para interactuar con la base de datos
 
-            # Agregar la nueva oferta a la sesión y confirmar la transacción para que se guarde en la base de datos
-            db_session.add(nueva_oferta)
-            db_session.commit()
-            logging.info("Oferta agregada exitosamente.")
-            return nueva_oferta
+                # Agregar la nueva oferta a la sesión y confirmar la transacción para que se guarde en la base de datos
+                session.add(nueva_oferta)
+                session.commit()
+                logging.info("Oferta agregada exitosamente.")
+                offer_schema = newOfferResponseJsonSchema()
+                return offer_schema.dump(nueva_oferta)
         except Exception as e:
             logging.error("Error al agregar la oferta:", str(e))
 
