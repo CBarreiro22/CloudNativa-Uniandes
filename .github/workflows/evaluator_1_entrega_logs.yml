@@ -40,8 +40,7 @@ jobs:
           retry-delay: 3s
           retry-all: true
       - name: Run the API and Postman's tests
-        run: | 
-          newman run ".evaluator/entrega1.json" --verbose
-          docker ps
-          docker logs evaluator_users_1
+        run: |
+          set -e
+          newman run ".evaluator/entrega1.json" --verbose || (docker-compose -f ".evaluator/users-docker-compose.yml" logs && exit 1)
   
