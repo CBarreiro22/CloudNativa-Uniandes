@@ -1,5 +1,9 @@
 # Utilizamos la imagen base de Python 3.10
+<<<<<<< HEAD
 FROM python:3.10
+=======
+FROM python:3.10-alpine
+>>>>>>> b40b12ca4fa3fc850a943d80f697a6e761faeee9
 
 # Establecemos el directorio de trabajo dentro del contenedor
 WORKDIR /offers
