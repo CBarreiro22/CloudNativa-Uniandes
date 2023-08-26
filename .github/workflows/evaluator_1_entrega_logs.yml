@@ -164,7 +164,7 @@ jobs:
       - name: Run the API and Postman's tests
         run: |
           set -e
-          newman run ".evaluator/entrega1.json" --verbose || (docker-compose -f ".evaluator/users-docker-compose.yml" logs && exit 1)
+          newman run ".evaluator/entrega1.json" --verbose || (docker-compose -f ".evaluator/offers-docker-compose.yml" logs && exit 1)
   evaluate_networks:
     runs-on: ubuntu-latest
     steps:
