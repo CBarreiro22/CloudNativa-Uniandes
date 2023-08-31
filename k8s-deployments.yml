@@ -1,0 +1,261 @@
+###################################
+# user
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+  labels:
+    app: users
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users
+          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/userss:1.0
+          ports:
+            - containerPort: 3000
+          # Realizar pull siempre a la imagen
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: users-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3000
+    type: HTTP
+    requestPath: /userss/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-users
+  annotations:
+    cloud.google.com/backend-config: '{"default": "users-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: users
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 31019
+
+---
+###################################
+# post
+###################################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posts
+  labels:
+    app: posts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: posts
+  template:
+    metadata:
+      labels:
+        app: posts
+    spec:
+      containers:
+        - name: posts
+          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/posts:1.0
+          ports:
+            - containerPort: 3001
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: posts-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3001
+    type: HTTP
+    requestPath: /posts/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-posts
+  annotations:
+    cloud.google.com/backend-config: '{"default": "posts-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: posts
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3001
+      nodePort: 31018
+---
+###################################
+# routes
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: routes
+  labels:
+    app: routes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: routes
+  template:
+    metadata:
+      labels:
+        app: routes
+    spec:
+      containers:
+        - name: routes
+          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/routes:1.0
+          ports:
+            - containerPort: 3002
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: routes-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3002
+    type: HTTP
+    requestPath: /routes/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-routes
+  annotations:
+    cloud.google.com/backend-config: '{"default": "routes-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: routes
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3002
+      nodePort: 31017
+---
+###################################
+# routes
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: offers
+  labels:
+    app: offers
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: offers
+  template:
+    metadata:
+      labels:
+        app: offers
+    spec:
+      containers:
+        - name: offers
+          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/offers:1.0
+          ports:
+            - containerPort: 3003
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: offers-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3003
+    type: HTTP
+    requestPath: /offers/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: offers-routes
+  annotations:
+    cloud.google.com/backend-config: '{"default": "offers-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: offers
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3003
+      nodePort: 31016
+###################################
+# INGRESS
+###################################
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gateway-ingress-8
+  labels:
+    name: gateway-ingress-8
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: /users
+        backend:
+          service:
+            name: servicio-users
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: /routes
+        backend:
+          service:
+            name: servicio-routes
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: /posts
+        backend:
+          service:
+            name: servicio-posts
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /offers
+        backend:
+          service:
+            name: servicio-offers
+            port:
+              number: 80
+
