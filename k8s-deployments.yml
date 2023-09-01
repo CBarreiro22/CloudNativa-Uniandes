@@ -19,12 +19,25 @@ spec:
     spec:
       containers:
         - name: users
-          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/userss:1.0
+          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/users:1.0
           ports:
             - containerPort: 3000
+          env:
+            - name: DB_NAME
+              value: containers
+            - name: DB_HOST
+              value: 192.168.0.3
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_PASSWORD
           # Realizar pull siempre a la imagen
           imagePullPolicy: Always
-
 ---
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
@@ -79,6 +92,22 @@ spec:
           image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/posts:1.0
           ports:
             - containerPort: 3001
+          env:
+            - name: USERS_PATH
+              value: http://servicio-users
+            - name: DB_NAME
+              value: containers
+            - name: DB_HOST
+              value: 192.168.0.3
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_PASSWORD
           imagePullPolicy: Always
 
 ---
@@ -133,6 +162,9 @@ spec:
           image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/routes:1.0
           ports:
             - containerPort: 3002
+          env:
+            - name: USERS_PATH
+              value: http://servicio-users
           imagePullPolicy: Always
 
 ---
@@ -187,6 +219,22 @@ spec:
           image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/offers:1.0
           ports:
             - containerPort: 3003
+          env:
+            - name: USERS_PATH
+              value: http://servicio-users
+            - name: DB_NAME
+              value: containers
+            - name: DB_HOST
+              value: 192.168.0.3
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_PASSWORD
           imagePullPolicy: Always
 
 ---
@@ -215,7 +263,7 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3003
-      nodePort: 31016
+      nodePort: 31020
 ###################################
 # INGRESS
 ###################################
@@ -258,4 +306,3 @@ spec:
             name: servicio-offers
             port:
               number: 80
-
