@@ -30,12 +30,9 @@ spec:
             - name: DB_PORT
               value: "5432"
             - name: DB_USER
-              value: postgres
+              value: containers_user
             - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: DB_PASSWORD
+              value: "},u1Y},QT._Sq0fl"
           # Realizar pull siempre a la imagen
           imagePullPolicy: Always
 ---
@@ -102,12 +99,9 @@ spec:
             - name: DB_PORT
               value: "5432"
             - name: DB_USER
-              value: postgres
+              value: containers_user
             - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: DB_PASSWORD
+              value: "},u1Y},QT._Sq0fl"
           imagePullPolicy: Always
 
 ---
@@ -165,8 +159,17 @@ spec:
           env:
             - name: USERS_PATH
               value: http://servicio-users
+            - name: DB_NAME
+              value: containers
+            - name: DB_HOST
+              value: 192.168.0.3
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: containers_user
+            - name: DB_PASSWORD
+              value: "},u1Y},QT._Sq0fl"
           imagePullPolicy: Always
-
 ---
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
@@ -229,12 +232,9 @@ spec:
             - name: DB_PORT
               value: "5432"
             - name: DB_USER
-              value: postgres
+              value: containers_user
             - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: DB_PASSWORD
+              value: "},u1Y},QT._Sq0fl"
           imagePullPolicy: Always
 
 ---
