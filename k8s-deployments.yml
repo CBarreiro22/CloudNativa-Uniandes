@@ -45,7 +45,7 @@ spec:
     checkIntervalSec: 30
     port: 3000
     type: HTTP
-    requestPath: /userss/ping
+    requestPath: /users/ping
 ---
 kind: Service
 apiVersion: v1
@@ -199,7 +199,7 @@ spec:
       nodePort: 31017
 ---
 ###################################
-# routes
+# offers
 ###################################
 apiVersion: apps/v1
 kind: Deployment
@@ -252,7 +252,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: offers-routes
+  name: servicio-offers
   annotations:
     cloud.google.com/backend-config: '{"default": "offers-config"}'
 spec:
