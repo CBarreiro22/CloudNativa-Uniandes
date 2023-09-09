@@ -1,6 +1,5 @@
-import datetime
-from sqlalchemy import Column, Integer, String, DateTime
-from .model import Model
+from sqlalchemy import Column, Integer, String
+from src.models.model import Model
 
 
 class Scores(Model):
@@ -21,3 +20,4 @@ class Scores(Model):
         self.scores = scores
 
         super().__init__()
+
