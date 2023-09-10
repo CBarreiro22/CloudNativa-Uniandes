@@ -132,6 +132,7 @@ services:
       interval: 2s
       timeout: 5s
       retries: 5
+
 networks:
   user_net:
     driver: bridge
