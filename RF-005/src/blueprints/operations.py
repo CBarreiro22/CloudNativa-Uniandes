@@ -1,31 +1,57 @@
 import os
 import requests
+import json
 from dotenv import load_dotenv
 from flask import Blueprint, request, jsonify
 from src.errors.errors import InvalidToken, MissingToken
 loaded = load_dotenv('.env.development')
 USERS_PATH = os.environ["USERS_PATH"]
 POSTS_PATH=os.environ["POSTS_PATH"]
-ROUTES_PATH=os.environ["POSTS_PATH"]
-OFFERS_PATH=os.environ["POSTS_PATH"]
+ROUTES_PATH=os.environ["ROUTES_PATH"]
+OFFERS_PATH=os.environ["OFFERS_PATH"]
+SCORES_PATH=os.environ["SCORES_PATH"]
 
 operations_blueprint= Blueprint('operations', __name__)
 
 @operations_blueprint.route('/rf005/posts/<string:id>', methods=['GET'])
 def get_offers(id):
+    #validar token, obtener token y usuario
     value_token=get_token(request)
+    #obtener usuarioId en la posición 0
     current_user_id=value_token[0]
+    #obtener tokenId en la posición 1
     token= value_token[1]
+    #REQUEST 1: consultar publicación por id
     post = requests.get(f"{POSTS_PATH}/posts/{id}", headers={"Authorization":token})
-    route = requests.get(f"{ROUTES_PATH}/routes/{post.json()['routeId']}", headers={"Authorization":token})
-    offers = requests.get(f"{OFFERS_PATH}/offers?post={id}", headers={"Authorization":token})
-    #403 El usuario no tiene permiso para ver el contenido de esta publicación.    
-    #404 La publicación no existe.
-    print (post.json()['routeId'])
-    if post.status_code == 404:
+    #valida que exista la publicación. Status Code 200 indica que publicación existe, cualquier valor diferente no existe
+    if post.status_code != 200:
         return '', 404
-    if post.status_code == 200 and post.json()['userId'] != current_user_id:
+    #valida que el usuario tenga permisos sobre esa publicación
+    if post.json()['userId'] != current_user_id:
             return '', 403
+    #REQUEST 2: consultar route por routeId
+    route = requests.get(f"{ROUTES_PATH}/routes/{post.json()['routeId']}", headers={"Authorization":token})
+    #REQUEST 3: consultar publicaciones por postId
+    offers = requests.get(f"{OFFERS_PATH}/offers/{id}", headers={"Authorization":token})
+    #Por cada oferta, is a consultar el score al servicio de score
+    offers_dictionary = json.loads(offers)
+    ofertas = []
+    for offer in offers_dictionary:
+        di={}
+        score = requests.get(f"{SCORES_PATH}/scores/{offer['id']}", headers={"Authorization":token})
+        di["id"]=offer["id"]
+        di["userId"]=offer["userId"]
+        di["description"]=offer["description"]
+        di["size"]=offer["size"]
+        di["fragile"]=offer["fragile"]
+        di["offer"]=offer["offer"]
+        di["score"]=score.json()['score']
+        di["createdAt"]=offer["createdAt"]
+        ofertas.append(di)
+        #offer["score"]=score.json()['score']
+    #Ordenar por orden descendente con base al score
+    ofertas = sorted(ofertas, key = lambda x : x.score, reverse=True)
+
     
     #  "data": {
     #     "id": identificador de la publicación,
@@ -63,11 +89,11 @@ def get_offers(id):
     response = {
         "data":{
             "id": post.json()['id'],
-            
-            "offers":""
+            "route": json.dumps(route),
+            "offers":json.dumps(ofertas)
         }
     }
-    return jsonify(response) , 200
+    return jsonify(response), 200
 
 def get_token(value):
     try:
