@@ -4,7 +4,7 @@ import requests
 from flask import Blueprint, jsonify, request
 
 from ..models.score import Scores
-from ..errors.errors import TokenNotHeaderError
+from ..errors.errors import ApiError, TokenNotHeaderError
 from src.models.model import init_db,db_session
 
 
@@ -38,50 +38,46 @@ def score_operation():
         "Authorization": token
     }
 
+    try:
+        # Realizar una solicitud GET a la ruta /offers/id_offer
+        offer_response = requests.get(f"{OFFER_PATH}/offers/{id_offer}", headers=headers)
+        if offer_response.status_code != 200:
+            if offer_response.status_code == 401:
+                return jsonify({"error": "Token invalido o esta vencido"}), 401
+            return jsonify({"error": "Error al obtener la oferta"}), 500
 
-    # Realizar una solicitud GET a la ruta /offers/id_offer
-    offer_response = requests.get(f"{OFFER_PATH}/offers/{id_offer}", headers=headers)
-    print(offer_response.status_code)
-    if offer_response.status_code != 200:
-        if offer_response.status_code == 401:
-            return jsonify({"error": "Token invalido o esta vencido"}), 401
-        return jsonify({"error": "Error al obtener la oferta"}), 500
+        offer_data = offer_response.json()
+        offer_value = offer_data.get("offer")
+        offer_size = offer_data.get("size")
 
-    offer_data = offer_response.json()
-    offer_value = offer_data.get("offer")
-    offer_size = offer_data.get("size")
+        # Realizar una solicitud GET a la ruta /routes/id_route
+        route_response = requests.get(f"{ROUTE_PATH}/routes/{id_route}", headers=headers)
 
-    # Realizar una solicitud GET a la ruta /routes/id_route
-    route_response = requests.get(f"{ROUTE_PATH}/routes/{id_route}", headers=headers)
+        if route_response.status_code != 200:
+            return jsonify({"error": "Error al obtener la ruta"}), 500
 
-    if route_response.status_code != 200:
-        return jsonify({"error": "Error al obtener la ruta"}), 500
+        route_data = route_response.json()
+        bag_cost = route_data.get("bagCost")
 
-    route_data = route_response.json()
-    bag_cost = route_data.get("bagCost")
+        # Realizar el cálculo del score utilizando los valores obtenidos
+        score = calcular_score(offer_value, offer_size, bag_cost)
+        nuevo_score = Scores(
+            id_offer=id_offer,
+            id_route=id_route,
+            offer=offer_value,
+            size=offer_size,
+            bagcost=bag_cost,
+            score=score
+        )
+        db_session.add(nuevo_score)
 
-    # Realizar el cálculo del score utilizando los valores obtenidos
-    score = calcular_score(offer_value, offer_size, bag_cost)
-    nuevo_score = Scores(
-        id_offer=id_offer,
-        id_route=id_route,
-        offer=offer_value,
-        size=offer_size,
-        bagcost=bag_cost,
-        score=score
-    )
-    print(nuevo_score)
-    db_session.add(nuevo_score)
+        db_session.commit()
 
-    db_session.commit()
-
-    # Devolver el score calculado como respuesta
-    return jsonify({"score": score}), 200
+        # Devolver el score calculado como respuesta
+        return jsonify({"score": score}), 200
    
-
-    #try:
-    #except Exception as e:
-     #   return jsonify({"error": "Error interno del servidor"}), 500
+    except Exception as e:
+        return ApiError()
 
 def calcular_score(offer_value, offer_size, bag_cost):
     # monto oferta - (porcentaje de ocupación de una maleta * valor de la maleta en el trayecto)
@@ -101,22 +97,21 @@ def calcular_score(offer_value, offer_size, bag_cost):
 def get_score_info(id_offer):
     # Obtener el token del encabezado Authorization
     token = request.headers.get('Authorization')
-    print("INgreso al metodo")
     if not token or not token.startswith('Bearer '):
         raise TokenNotHeaderError("El token no está en el encabezado de la solicitud")
-
-    print(id_offer,"id_offer")
-    token = token.split(' ')[1]
-    print(token,"token")
-    score = db_session.query(Scores).filter_by(id_offer=id_offer).first()
-    print(score,"score")
-    if score is None:
-        return jsonify({"error": "Puntaje no encontrado"}), 404  # Devuelve un error 404 si no se encuentra el puntaje
-    response = {
-        "id": str(score.id),
-        "Score": score.score
-    }
-    return jsonify(response), 200
+    
+    try:
+        token = token.split(' ')[1]
+        score = db_session.query(Scores).filter_by(id_offer=id_offer).first()
+        if score is None:
+            return jsonify({"error": "Puntaje no encontrado"}), 404
+        response = {
+            "id": str(score.id),
+            "Score": score.score
+        }
+        return jsonify(response), 200
+    except Exception as e:
+        return ApiError()
 
 @scores_blueprint.route('/score/reset', methods=['POST'])
 def reset_database():

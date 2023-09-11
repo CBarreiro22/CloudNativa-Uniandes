@@ -1,6 +1,6 @@
 class ApiError(Exception):
     code = 500  # Código HTTP por defecto
-    description = "An error occurred"
+    description = "Error en el servidor"
 
     def __init__(self, description=None):
         if description is not None:
