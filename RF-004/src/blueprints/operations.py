@@ -73,6 +73,6 @@ def create_offer_of_post(post_id):
             "createdAt": offer_response.get("createdAt"),
             "postId": post_id
         },
-        "msg": "Se creo la oferta dada la publicación con esta utilidad: " + offer_score
+        "msg": "Se creo la oferta dada la publicación con esta utilidad: " + str(offer_score)
     }
     return response_body, 201

@@ -1,3 +1,4 @@
+import json
 import os
 
 import requests
@@ -14,7 +15,8 @@ class ScoreService:
             'Authorization': token,
             'Content-Type': 'application/json'
         }
-        response = requests.post(os.environ["SCORES_PATH"] + '/score', headers=headers, data=body)
+        updated_body_json = json.dumps(body)
+        response = requests.post(os.environ["SCORES_PATH"] + '/score', headers=headers, data=updated_body_json)
 
         if response.status_code == 200:
             json_data = response.json()
