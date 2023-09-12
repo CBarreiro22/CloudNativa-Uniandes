@@ -4,7 +4,7 @@ import requests
 from flask import Blueprint, jsonify, request
 
 from ..models.score import Scores
-from ..errors.errors import ApiError, TokenNotHeaderError
+from ..errors.errors import ApiError, InternalServerError, TokenNotHeaderError
 from src.models.model import init_db,db_session
 
 
@@ -113,12 +113,21 @@ def get_score_info(id_offer):
     except Exception as e:
         return ApiError()
 
+@scores_blueprint.route('/score/ping', methods=['GET'])
+def health_check():
+    try:
+        # Código que podría generar excepciones
+        return "pong", 200
+    except Exception as e:
+        # Manejo de la excepción
+        raise InternalServerError()
+
 @scores_blueprint.route('/score/reset', methods=['POST'])
 def reset_database():
     # Eliminar todos los registros de la tabla Users
     db_session.query(Scores).delete()
 
-    # Realizar commit y cerrar la sesión
+    # Realizar commit
     db_session.commit()
 
     return jsonify({"msg": "Todos los datos fueron eliminados"}), 200
