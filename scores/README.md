@@ -43,7 +43,7 @@ costo del envío de una maleta en el trayecto
 Para el despliegue de este servicio se va a escuchar por el puerto 3004
 
 ### Calculo  del Score
-<table align="center">
+<table>
 <tr>
 <th>Método</th>
 <td>POST</td>
@@ -77,7 +77,7 @@ Para el despliegue de este servicio se va a escuchar por el puerto 3004
 </table>
 
 ### Consulta del Score
-<table align="center">
+<table>
 <tr>
 <th>Método</th>
 <td>Get</td>
