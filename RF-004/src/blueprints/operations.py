@@ -5,18 +5,10 @@ from flask import request
 
 from ..commands.offer_service import OfferService
 from ..commands.post_service import PostService
-from ..commands.user_service import UserService
 from ..commands.score_service import ScoreService
-
-# from ..models.model import init_db
-# from ..models.post import PostJsonSchema
+from ..commands.user_service import UserService
 
 operations_blueprint = Blueprint('operations', __name__)
-
-
-# init_db()
-# post_schema = PostJsonSchema()
-
 
 def validate_request_body(func):
     @wraps(func)
@@ -76,3 +68,7 @@ def create_offer_of_post(post_id):
         "msg": "Se creo la oferta dada la publicación con esta utilidad: " + str(offer_score)
     }
     return response_body, 201
+
+@operations_blueprint.route('/rf004/ping', methods=['GET'])
+def check_health():
+    return 'pong', 200

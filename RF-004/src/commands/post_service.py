@@ -37,8 +37,8 @@ def is_post_expired(json_data):
             post_expireAt = datetime.strptime(post_expireAt.split('.')[0], ISO_FORMATTER)
         except ValueError:
             return True
-    current_datetime = datetime.now(timezone.utc).replace(tzinfo=None)
     try:
+        current_datetime = datetime.now(timezone.utc).replace(tzinfo=None)
         return post_expireAt > current_datetime
-    except ValueError:
+    except (ValueError, TypeError):
         return True
