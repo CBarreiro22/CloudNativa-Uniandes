@@ -99,3 +99,46 @@ Para el despliegue de este servicio se va a escuchar por el puerto 3004
 <td>N/A</td>
 </tr>
 </table>
+
+## Organizacion
+```shell
+.
+├── Dockerfile
+├── README.md
+├── requirements.txt
+├── src
+│   ├── blueprints
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-310.pyc
+│   │   │   ├── scoreOperation.cpython-310.pyc
+│   │   │   └── user.cpython-310.pyc
+│   │   └── scoreOperation.py
+│   ├── errors
+│   │   ├── errors.py
+│   │   ├── __init__.py
+│   │   └── __pycache__
+│   │       ├── errors.cpython-310.pyc
+│   │       └── __init__.cpython-310.pyc
+│   ├── __init__.py
+│   ├── main.py
+│   ├── models
+│   │   ├── __init__.py
+│   │   ├── model.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-310.pyc
+│   │   │   ├── model.cpython-310.pyc
+│   │   │   └── score.cpython-310.pyc
+│   │   └── score.py
+│   └── __pycache__
+│       ├── __init__.cpython-310.pyc
+│       └── main.cpython-310.pyc
+└── tests
+    ├── blueprint
+    │   ├── __init__.py
+    │   └── test_scores.py
+    ├── conftest.py
+    └── __init__.py
+
+```
+g
