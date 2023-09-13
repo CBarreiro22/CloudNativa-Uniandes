@@ -96,16 +96,6 @@ Para el despliegue de este servicio se va a escuchar por el puerto 3004
 </tr>
 <tr>
 <th>Cuerpo</th>
-<td>
-
-```json
-{
-  "id_offer":"Id de la oferta",
-  "id_route":"Id de la ruta"
-}
-
-```
-
-</td>
+<td>N/A</td>
 </tr>
 </table>
