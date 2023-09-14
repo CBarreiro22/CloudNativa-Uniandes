@@ -12,7 +12,7 @@ from ..errors.errors import ApiError, InternalServerError, TokenNotHeaderError
 # Crear el Blueprint para el calculo del score
 scores_blueprint = Blueprint('scores', __name__)
 OFFER_PATH = os.environ["OFFERS_PATH"]
-ROUTE_PATH = os.environ["ROUTE_PATH"]
+ROUTE_PATH = os.environ["ROUTES_PATH"]
 
 init_db()
 

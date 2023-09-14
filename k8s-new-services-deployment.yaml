@@ -45,7 +45,7 @@ spec:
     checkIntervalSec: 30
     port: 3005
     type: HTTP
-    requestPath: /rf005/ping
+    requestPath: /rf005/posts/ping
 ---
 kind: Service
 apiVersion: v1
@@ -179,7 +179,7 @@ spec:
     checkIntervalSec: 30
     port: 3004
     type: HTTP
-    requestPath: /scores/ping
+    requestPath: /score/ping
 ---
 kind: Service
 apiVersion: v1
