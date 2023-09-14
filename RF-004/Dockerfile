@@ -16,10 +16,10 @@ RUN pip install -r requirements.txt
 COPY src /offers_post/src
 
 # Exponemos el puerto 3005
-EXPOSE 3005
+EXPOSE 3007
 
 # Definimos una variable de entorno para el archivo .env.development
 ENV ENV_FILE .env.development
 
 # Comando para correr la aplicación Flask
-CMD FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3005
+CMD FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3007

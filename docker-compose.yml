@@ -132,6 +132,21 @@ services:
       interval: 2s
       timeout: 5s
       retries: 5
+  offers_post:
+    build:
+      context: ./RF-004
+      dockerfile: Dockerfile
+    ports:
+      - "3007:3007"
+    networks:
+      - app_net
+    environment:
+      ENV: Development
+      USERS_PATH: "http://users:3000"
+      POSTS_PATH: "http://posts:3001"
+      OFFERS_PATH: "http://offers:3003"
+      SCORES_PATH: "http://scores:3004"
+      VERSION: 1.0
 
 networks:
   user_net:
@@ -143,4 +158,6 @@ networks:
   offer_net:
     driver: bridge
   route_net:
+    driver: bridge
+  offers_post:
     driver: bridge
