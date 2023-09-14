@@ -1,32 +1,36 @@
 import os
 
 import requests
+from dotenv import load_dotenv
 from marshmallow import Schema, fields
 
 from ..erros.errors import internal_server_error
 from .BaseCommand import BaseCommand
 
-OFFERS_PATH = os.environ["OFFERS_PATH"]
+loaded = load_dotenv('.env.development')
+
+ROUTES_PATH = os.environ["ROUTES_PATH"]
 
 
 class RoutesService(BaseCommand):
 
-    def get(self, flight, headers):
+    @staticmethod
+    def get( flight, headers):
 
         try:
-            response = requests.get(url=f"{OFFERS_PATH}/offers?flight={flight}", headers=headers)
+            response = requests.get(url=f"{ROUTES_PATH}/routes?flight={flight}", headers=headers)
 
             return response
         except requests.exceptions.RequestException as e:
             raise internal_server_error
 
-    def post(self, route, headers):
+    @staticmethod
+    def post(route, headers):
 
-        schema = RouteJsonSchema()
+        schema = RouteRequestJsonSchema()
         json_route = schema.dump(route)
-        response = requests.post(url=f"{OFFERS_PATH}/routes", json=json_route, headers=headers)
-
-        return response
+        response = requests.post(url=f"{ROUTES_PATH}/routes", json=json_route, headers=headers)
+        return RouteResponseJsonSchema().load (response.json())
 
 
 class Route:
@@ -46,7 +50,13 @@ class Route:
         self.plannedEndDate = plannedEndDate
 
 
-class RouteJsonSchema(Schema):
+class RouteResponse:
+    def __init__(self, id: object, createdAt: object) -> object:
+        self.id = id
+        self.cretedAt = createdAt
+
+
+class RouteRequestJsonSchema(Schema):
     flightId = fields.String()
     sourceAirportCode = fields.String()
     sourceCountry = fields.String()
@@ -55,3 +65,8 @@ class RouteJsonSchema(Schema):
     bagCost = fields.Number()
     plannedStartDate = fields.String()
     plannedEndDate = fields.String()
+
+
+class RouteResponseJsonSchema(Schema):
+    id = fields.String()
+    createdAt = fields.String()
