@@ -8,4 +8,4 @@ class MissingToken(ApiError):
 
 class InvalidToken(ApiError):
     code=401
-    descrption=""
+    description=""

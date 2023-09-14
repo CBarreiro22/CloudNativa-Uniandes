@@ -1,3 +1,4 @@
+from cmath import log
 import os
 import requests
 import json
@@ -22,7 +23,8 @@ def get_offers(id):
     #obtener tokenId en la posición 1
     token= value_token[1]
     #REQUEST 1: consultar publicación por id
-    post = requests.get(f"{POSTS_PATH}/posts/{id}", headers={"Authorization":token})
+    #post = requests.get(f"{POSTS_PATH}/posts/{id}", headers={"Authorization":token})
+    post=get_post(id, token)
     #valida que exista la publicación. Status Code 200 indica que publicación existe, cualquier valor diferente no existe
     if post.status_code != 200:
         return '', 404
@@ -30,70 +32,54 @@ def get_offers(id):
     if post.json()['userId'] != current_user_id:
             return '', 403
     #REQUEST 2: consultar route por routeId
-    route = requests.get(f"{ROUTES_PATH}/routes/{post.json()['routeId']}", headers={"Authorization":token})
+    route = get_route(post.json()['routeId'], token) #requests.get(f"{ROUTES_PATH}/routes/{post.json()['routeId']}", headers={"Authorization":token})
     #REQUEST 3: consultar publicaciones por postId
-    offers = requests.get(f"{OFFERS_PATH}/offers/{id}", headers={"Authorization":token})
+    offers = get_offers(id, token)# requests.get(f"{OFFERS_PATH}/offers?post={id}", headers={"Authorization":token})
     #Por cada oferta, is a consultar el score al servicio de score
-    offers_dictionary = json.loads(offers)
     ofertas = []
-    for offer in offers_dictionary:
+    for offer in offers.json():
         di={}
-        score = requests.get(f"{SCORES_PATH}/scores/{offer['id']}", headers={"Authorization":token})
-        di["id"]=offer["id"]
-        di["userId"]=offer["userId"]
-        di["description"]=offer["description"]
-        di["size"]=offer["size"]
-        di["fragile"]=offer["fragile"]
-        di["offer"]=offer["offer"]
-        di["score"]=score.json()['score']
-        di["createdAt"]=offer["createdAt"]
-        ofertas.append(di)
-        #offer["score"]=score.json()['score']
+        score = requests.get(f"{SCORES_PATH}/score/{offer['id']}", headers={"Authorization":token})
+        if score.status_code == 200:
+            di["id"]=offer["id"]
+            di["userId"]=offer["userId"]
+            di["description"]=offer["description"]
+            di["size"]=offer["size"]
+            di["fragile"]=offer["fragile"]
+            di["offer"]=offer["offer"]
+            di["score"]=score.json()['Score'] 
+            di["createdAt"]=offer["createdAt"]
+            ofertas.append(di)
     #Ordenar por orden descendente con base al score
-    ofertas = sorted(ofertas, key = lambda x : x.score, reverse=True)
-
-    
-    #  "data": {
-    #     "id": identificador de la publicación,
-    #     "expireAt": fecha y hora máxima en que se reciben ofertas en formato IDO,
-    #     "route": {
-    #         "id": identificador del trayecto,
-    #         "flightId": identificador del vuelo,
-    #         "origin": {
-    #             "airportCode": código del aeropuerto de origen,
-    #             "country": nombre del país de origen
-    #         },
-    #         "destiny": {
-    #             "airportCode": código del aeropuerto de destino,
-    #             "country": nombre del país de destino
-    #         },
-    #         "bagCost": costo de envío de maleta
-    #     },
-    #     "plannedStartDate": fecha y hora en que se planea el inicio del viaje en formato ISO,
-    #     "plannedEndDate": fecha y hora en que se planea la finalización del viaje en formato ISO,
-    #     "createdAt": fecha y hora de creación de la publicación en formato ISO,
-    #     "offers": [
-    #         {
-    #             "id": identificador de la oferta,
-    #             "userId": identificador del usuario que hizo la oferta,
-    #             "description": descripción del paquete a llevar,
-    #             "size": LARGE ó MEDIUM ó SMALL,
-    #             "fragile": booleano que indica si es un paquete delicado o no,
-    #             "offer": valor en dólares de la oferta para llevar el paquete,
-    #             "score": utilidad que deja llevar este paquete en la maleta,
-    #             "createdAt": fecha y hora de creación de la publicación en formato ISO
-    #         }
-    #     ]
-    # }
-    print (route)
+    ofertas = sorted(ofertas, key = lambda x : x["score"], reverse=True)
     response = {
         "data":{
             "id": post.json()['id'],
-            "route": json.dumps(route),
-            "offers":json.dumps(ofertas)
+            "expireAt":post.json()['expireAt'],
+            "route": {
+                "id":route.json()['id'],
+                "flightId":route.json()['flightId'],
+                "origin":{
+                    "airportCode":route.json()['sourceAirportCode'],
+                    "country":route.json()['sourceCountry']
+                },
+                "destiny":{
+                     "airportCode":route.json()['destinyAirportCode'],
+                    "country":route.json()['destinyCountry']
+                },
+                "bagCost":route.json()['bagCost']
+            },
+            "plannedStartDate":route.json()['plannedStartDate'],
+            "plannedEndDate":route.json()['plannedEndDate'],
+            "createdAt":route.json()['createdAt'],
+            "offers":ofertas
         }
     }
     return jsonify(response), 200
+
+@operations_blueprint.route('/rf005/posts/ping', methods=['GET'])
+def check_health():
+    return 'pong', 200
 
 def get_token(value):
     try:
@@ -109,8 +95,16 @@ def get_token(value):
     
 def is_valid_token(value):
     response_user = requests.get(f"{USERS_PATH}/users/me", headers={"Authorization":value})
-    #print(response_user.json())
     if response_user.status_code == 200:
         return [True, response_user.json()['id']]
     else:
         return [False, None]
+
+def get_post(id, token):
+    return requests.get(f"{POSTS_PATH}/posts/{id}", headers={"Authorization":token})
+
+def get_offers(id, token):
+    return requests.get(f"{OFFERS_PATH}/offers?post={id}", headers={"Authorization":token})
+
+def get_route(route_id, token):
+    requests.get(f"{ROUTES_PATH}/routes/{route_id}", headers={"Authorization":token})
