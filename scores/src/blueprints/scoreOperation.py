@@ -3,9 +3,10 @@ import os
 import requests
 from flask import Blueprint, jsonify, request
 
+from ..models.model import init_db, db_session
 from ..models.score import Scores
 from ..errors.errors import ApiError, InternalServerError, TokenNotHeaderError
-from src.models.model import init_db,db_session
+
 
 
 # Crear el Blueprint para el calculo del score
