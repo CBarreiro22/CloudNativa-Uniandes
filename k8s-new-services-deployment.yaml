@@ -157,6 +157,8 @@ spec:
               value: http://servicio-offers
             - name: ROUTES_PATH
               value: http://servicio-routes
+            - name: USERS_PATH
+              value: http://servicio-users
             - name: DB_NAME
               value: containers
             - name: DB_HOST

@@ -35,3 +35,13 @@ class UserExistError(ApiError):
 class InternalServerError(ApiError):
     code = 500
     description = "Internal Error"
+
+
+class MissingToken(ApiError):
+    code = 403
+    description = ""
+
+
+class InvalidToken(ApiError):
+    code = 401
+    description = "Token Invalido o esta vencido"
