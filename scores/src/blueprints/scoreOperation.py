@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request
 
 from ..models.model import init_db, db_session
 from ..models.score import Scores
-from ..errors.errors import ApiError, InternalServerError, TokenNotHeaderError, InvalidToken
+from ..errors.errors import ApiError,TokenNotHeaderError, InvalidToken
 
 # Crear el Blueprint para el calculo del score
 scores_blueprint = Blueprint('scores', __name__)
@@ -30,7 +30,7 @@ def score_operation():
 
     # Verificar que se haya proporcionado un token
     if not token:
-        return TokenNotHeaderError()
+        raise TokenNotHeaderError()
 
     # Incluir el token en el encabezado "Authorization" de las solicitudes a los endpoints offer y route
     headers = {
@@ -111,7 +111,7 @@ def health_check():
         return "pong", 200
     except Exception as e:
         # Manejo de la excepción
-        raise InternalServerError()
+        raise ApiError()
 
 
 @scores_blueprint.route('/score/reset', methods=['POST'])
