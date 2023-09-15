@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request
 
 from ..models.model import init_db, db_session
 from ..models.score import Scores
-from ..errors.errors import ApiError, InternalServerError, TokenNotHeaderError, MissingToken, InvalidToken
+from ..errors.errors import ApiError, InternalServerError, TokenNotHeaderError, InvalidToken
 
 # Crear el Blueprint para el calculo del score
 scores_blueprint = Blueprint('scores', __name__)
@@ -128,7 +128,7 @@ def reset_database():
 def get_token(value):
     token = value.headers.get('Authorization')
     if token is None:
-        raise MissingToken()
+        raise TokenNotHeaderError()
     if not is_valid_token(token):
         raise InvalidToken()
     return token
