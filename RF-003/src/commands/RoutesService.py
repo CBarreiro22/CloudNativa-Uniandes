@@ -24,13 +24,22 @@ class RoutesService(BaseCommand):
         except requests.exceptions.RequestException as e:
             raise internal_server_error
 
+
     @staticmethod
     def post(route, headers):
 
         schema = RouteRequestJsonSchema()
         json_route = schema.dump(route)
         response = requests.post(url=f"{ROUTES_PATH}/routes", json=json_route, headers=headers)
-        return RouteResponseJsonSchema().load (response.json())
+        if response.status_code == 200:
+            return RouteResponseJsonSchema().load (response.json())
+        elif response.status_code != 200:
+            return response.json(), response.status_code
+
+    @staticmethod
+    def delete (id, headers):
+        response = requests.delete(f"{ROUTES_PATH}/routes/{id}", headers=headers)
+        return response.json(), response.status_code
 
 
 class Route:
@@ -53,7 +62,7 @@ class Route:
 class RouteResponse:
     def __init__(self, id: object, createdAt: object) -> object:
         self.id = id
-        self.cretedAt = createdAt
+        self.createdAt = createdAt
 
 
 class RouteRequestJsonSchema(Schema):

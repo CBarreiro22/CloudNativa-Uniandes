@@ -24,6 +24,8 @@ class PostsService(BaseCommand, ABC):
         return response.json(), response.status_code
 
 
+
+
 class Post:
 
     def __init__(self, routeId, expireAt):
