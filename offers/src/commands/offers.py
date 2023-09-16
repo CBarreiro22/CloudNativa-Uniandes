@@ -18,6 +18,7 @@ class Offers(BaseCommand):
         self.user_id = user_id
         self.description = description
         self.size = size
+        self.size = size
         self.fragile = fragile
         self.offer = offer
 

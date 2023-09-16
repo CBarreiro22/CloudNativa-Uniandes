@@ -15,6 +15,6 @@ app.register_blueprint (rf003_blueprint)
 @app.errorhandler(ApiError)
 def handle_exception(err):
     response = {
-        "mssg": err.description,
+        "msg": err.description,
     }
     return jsonify(response), err.code

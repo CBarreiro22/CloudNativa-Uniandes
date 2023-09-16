@@ -1,10 +1,11 @@
 from flask import Blueprint, request, jsonify
 from jsonschema.validators import validate
 from jsonschema import ValidationError
-from ..erros.errors import no_token, invalid_token, json_invalid_new_offer
+from datetime import datetime
+from ..erros.errors import no_token, invalid_token, json_invalid_new_offer, duplicated_fligh, ivalid_dates,invalid_expiration_date
 from ..commands.PostService import Post, PostsService
 from ..commands.RoutesService import RoutesService, Route, RouteResponse
-
+ISO_FORMATTER = "%Y-%m-%dT%H:%M:%S.%fZ"
 rf003_blueprint = Blueprint("rf003", __name__)
 new_rf003_schema = {
     "type": "object",
@@ -63,8 +64,10 @@ def addRff03() -> object:
     flightId = json_data['flightId']
     expiretAt = json_data["expireAt"]
     headers = request.headers
-    user_id = None
+
     route_id = None
+    validate_dates (json_data)
+    validate_expiration_date(json_data)
     response_route = RoutesService.get(flight=flightId, headers=headers)
     route_response_obj = None
     if response_route.status_code == 200 and len(response_route.json()) == 0:
@@ -79,11 +82,16 @@ def addRff03() -> object:
         route_response_obj = RouteResponse(id=response_route.json()[0]['id'],
                                            createdAt=response_route.json()[0]['createdAt'])
         route_id = response_route.json()[0]['id']
-
     elif response_route.status_code == 403:
         raise no_token
     elif response_route.status_code == 401:
         raise invalid_token
+
+    response_get_post = PostsService.get(route=route_id, headers=headers)
+    if response_get_post.status_code == 200 and len(response_get_post.json()) > 0:
+        raise duplicated_fligh
+    if response_get_post.status_code != 200:
+        return response_get_post, response_get_post.status_code
 
     post = get_post(expireAt=expiretAt, routeId=route_id)
 
@@ -136,3 +144,21 @@ def validate_new_offer_schema(json_data):
 
     except ValidationError as e:
         raise json_invalid_new_offer
+
+def validate_dates(json_data):
+    planned_start_date = parse_iso_date(json_data['plannedStartDate'])
+    planned_end_date = parse_iso_date(json_data['plannedEndDate'])
+
+    if planned_start_date < datetime.now()  or planned_end_date < datetime.now():
+        raise  ivalid_dates
+    if planned_end_date < planned_start_date:
+        raise ivalid_dates
+def validate_expiration_date (json_data):
+    expiration_date = parse_iso_date(json_data['expireAt'])
+    if expiration_date < datetime.now():
+        raise invalid_expiration_date
+def parse_iso_date(date_str):
+    try:
+        return datetime.strptime(date_str, ISO_FORMATTER)
+    except ValueError:
+        return None
