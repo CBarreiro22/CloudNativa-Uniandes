@@ -23,7 +23,6 @@ def get_offers(id):
     #obtener tokenId en la posición 1
     token= value_token[1]
     #REQUEST 1: consultar publicación por id
-    #post = requests.get(f"{POSTS_PATH}/posts/{id}", headers={"Authorization":token})
     post=get_post(id, token)
     #valida que exista la publicación. Status Code 200 indica que publicación existe, cualquier valor diferente no existe
     if post.status_code != 200:
@@ -32,14 +31,14 @@ def get_offers(id):
     if post.json()['userId'] != current_user_id:
             return '', 403
     #REQUEST 2: consultar route por routeId
-    route = get_route(post.json()['routeId'], token) #requests.get(f"{ROUTES_PATH}/routes/{post.json()['routeId']}", headers={"Authorization":token})
+    route = get_route(post.json()['routeId'], token)
     #REQUEST 3: consultar publicaciones por postId
-    offers = get_offers(id, token)# requests.get(f"{OFFERS_PATH}/offers?post={id}", headers={"Authorization":token})
+    offers = get_offers(id, token)
     #Por cada oferta, is a consultar el score al servicio de score
     ofertas = []
     for offer in offers.json():
         di={}
-        score = requests.get(f"{SCORES_PATH}/score/{offer['id']}", headers={"Authorization":token})
+        score = get_score(offer['id'],token)
         if score.status_code == 200:
             di["id"]=offer["id"]
             di["userId"]=offer["userId"]
@@ -107,4 +106,7 @@ def get_offers(id, token):
     return requests.get(f"{OFFERS_PATH}/offers?post={id}", headers={"Authorization":token})
 
 def get_route(route_id, token):
-    requests.get(f"{ROUTES_PATH}/routes/{route_id}", headers={"Authorization":token})
+    return requests.get(f"{ROUTES_PATH}/routes/{route_id}", headers={"Authorization":token})
+
+def get_score(offer_id, token):
+    return requests.get(f"{SCORES_PATH}/score/{offer_id}", headers={"Authorization":token})
