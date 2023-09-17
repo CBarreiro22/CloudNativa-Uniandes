@@ -61,10 +61,3 @@ spec:
             name: servicio-rf005
             port:
               number: 80
-      - pathType: Prefix
-        path: /score
-        backend:
-          service:
-            name: servicio-scores
-            port:
-              number: 80
