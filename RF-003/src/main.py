@@ -5,7 +5,7 @@ from .erros.errors import ApiError
 
 from .blueprints.rf003 import rf003_blueprint
 
-loaded = load_dotenv('RF-003/.env.development')
+loaded = load_dotenv('.env.development')
 
 app = Flask (__name__)
 app.register_blueprint (rf003_blueprint)

@@ -9,14 +9,14 @@ from .BaseCommand import BaseCommand
 
 loaded = load_dotenv('.env.development')
 
-ROUTES_PATH = os.environ["ROUTES_PATH"]
+
 
 
 class RoutesService(BaseCommand):
 
     @staticmethod
     def get( flight, headers):
-
+        ROUTES_PATH = os.environ["ROUTES_PATH"]
         try:
             response = requests.get(url=f"{ROUTES_PATH}/routes?flight={flight}", headers=headers)
 
@@ -27,7 +27,7 @@ class RoutesService(BaseCommand):
 
     @staticmethod
     def post(route, headers):
-
+        ROUTES_PATH = os.environ["ROUTES_PATH"]
         schema = RouteRequestJsonSchema()
         json_route = schema.dump(route)
         response = requests.post(url=f"{ROUTES_PATH}/routes", json=json_route, headers=headers)
@@ -38,6 +38,7 @@ class RoutesService(BaseCommand):
 
     @staticmethod
     def delete (id, headers):
+        ROUTES_PATH = os.environ["ROUTES_PATH"]
         response = requests.delete(f"{ROUTES_PATH}/routes/{id}", headers=headers)
         return response.json(), response.status_code
 
