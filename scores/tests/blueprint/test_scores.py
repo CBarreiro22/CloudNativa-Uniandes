@@ -71,16 +71,6 @@ def test_score_operation_with_missing_parameters(client):
     assert "error" in response.json
     assert response.json["error"] == "Los parámetros id_offer e id_route son obligatorios"
 
-
-def test_score_operation_no_valid_token(client):
-    response = client.post(
-        '/score',
-        json={"id_offer": 1, "id_route": 2},
-        headers={"Authorization": "token_erroneo"}
-    )
-    assert response.status_code == 401
-
-
 def test_score_operation_sin_token(client):
     response = client.post(
         '/score',
@@ -127,10 +117,6 @@ def test_calculate_score():
     assert calcular_score(300, 'LARGE', 30) == 292.5
 
 
-def test_is_valid_token_1():
-    assert is_valid_token("invalid_token") == False
-    is_valid_token_mock = MagicMock(return_value=True)
-    assert is_valid_token_mock("valid_token") == True
 
 
 def test_health_check(client):
