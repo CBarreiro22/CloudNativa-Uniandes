@@ -9,7 +9,6 @@ from unittest.mock import MagicMock, patch, Mock
 from src.main import app
 from src import main
 from src.blueprints import operations
-import requests_mock
 
 
 class TestRF005Operations(unittest.TestCase):
