@@ -1,0 +1,259 @@
+###################################
+# RF005
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rf005
+  labels:
+    app: rf005
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rf005
+  template:
+    metadata:
+      labels:
+        app: rf005
+    spec:
+      containers:
+        - name: rf005
+          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/rf005:1.0
+          ports:
+            - containerPort: 3005
+          env:
+            - name: USERS_PATH
+              value: http://servicio-users
+            - name: POSTS_PATH
+              value: http://servicio-posts
+            - name: ROUTES_PATH
+              value: http://servicio-routes
+            - name: OFFERS_PATH
+              value: http://servicio-offers
+            - name: SCORES_PATH
+              value: http://servicio-scores
+          # Realizar pull siempre a la imagen
+          imagePullPolicy: Always
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: rf005-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3005
+    type: HTTP
+    requestPath: /rf005/posts/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-rf005
+  annotations:
+    cloud.google.com/backend-config: '{"default": "rf005-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: rf005
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3005
+      nodePort: 31030
+
+---
+###################################
+# RF004
+###################################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rf004
+  labels:
+    app: rf004
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rf004
+  template:
+    metadata:
+      labels:
+        app: rf004
+    spec:
+      containers:
+        - name: rf004
+          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/rf004:1.0
+          ports:
+            - containerPort: 3007
+          env:
+            - name: USERS_PATH
+              value: http://servicio-users
+            - name: POSTS_PATH
+              value: http://servicio-posts
+            - name: OFFERS_PATH
+              value: http://servicio-offers
+            - name: SCORES_PATH
+              value: http://servicio-scores
+          # Realizar pull siempre a la imagen
+          imagePullPolicy: Always
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: rf004-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3007
+    type: HTTP
+    requestPath: /rf004/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-rf004
+  annotations:
+    cloud.google.com/backend-config: '{"default": "rf004-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: rf004
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3007
+      nodePort: 31021
+---
+###################################
+# SCORES
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scores
+  labels:
+    app: scores
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scores
+  template:
+    metadata:
+      labels:
+        app: scores
+    spec:
+      containers:
+        - name: scores
+          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/score:1.0
+          ports:
+            - containerPort: 3004
+          env:
+            - name: OFFERS_PATH
+              value: http://servicio-offers
+            - name: ROUTES_PATH
+              value: http://servicio-routes
+            - name: USERS_PATH
+              value: http://servicio-users
+            - name: DB_NAME
+              value: containers
+            - name: DB_HOST
+              value: 192.168.0.3
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: containers_user
+            - name: DB_PASSWORD
+              value: "},u1Y},QT._Sq0fl"
+          # Realizar pull siempre a la imagen
+          imagePullPolicy: Always
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: scores-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3004
+    type: HTTP
+    requestPath: /score/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-scores
+  annotations:
+    cloud.google.com/backend-config: '{"default": "scores-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: scores
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3004
+      nodePort: 31022
+---
+###################################
+# RF003
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rf003
+  labels:
+    app: rf003
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rf003
+  template:
+    metadata:
+      labels:
+        app: rf003
+    spec:
+      containers:
+        - name: rf003
+          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/rf003:1.0
+          ports:
+            - containerPort: 3006
+          env:
+            - name: POSTS_PATH
+              value: http://servicio-posts
+            - name: ROUTES_PATH
+              value: http://servicio-routes
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: rf003-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3006
+    type: HTTP
+    requestPath: /rf003/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-rf003
+  annotations:
+    cloud.google.com/backend-config: '{"default": "rf003-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: rf003
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3006
+      nodePort: 31023

@@ -25,11 +25,14 @@ jobs:
             pipenv run pytest --cov=posts/src -v posts/tests/* -s --cov-fail-under=70
             pipenv run pytest --cov=routes/src  -v routes/tests/* -s --cov-fail-under=70
             pipenv run pytest --cov=scores/src  -v scores/tests/* -s --cov-fail-under=70
+            pipenv run pytest --cov=RF-003/src  -v RF-003/tests/* -s --cov-fail-under=70
+            pipenv run pytest --cov=RF-004/src  -v RF-004/tests/* -s --cov-fail-under=70
+            pipenv run pytest --cov=RF-005/src  -v RF-005/tests/* -s --cov-fail-under=70
   automerge:
       name: Mezcla rama -> main
       needs: job1
       runs-on: ubuntu-latest
-      if: contains(github.event.head_commit.message, 'merge')
+      if: contains(github.event.head_commit.message, 'aprobado merge')
       steps:
         - name: Merge rama -> main
           uses: tukasz/direct-merge-action@master

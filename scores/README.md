@@ -11,22 +11,22 @@ El servicio de score es una parte fundamental de nuestra plataforma que permite 
 <li><strong>Monto oferta:</strong> valor en dólares de la oferta por llevar el paquete</li>
 <li><strong>Porcentaje de ocupación de una maleta:</strong>
 
-<table align="center">
+<table text-align="center">
 <tr>
 <th>
 Tamaño del paquete
 </th>
 <th>Porcentaje ocupación en la maleta</th>
 </tr>
-<tr align="center">
+<tr text-align="center">
 <td>VOLUMINOSO / LARGE</td>
 <td>100%</td>
 </tr>
-<tr align="center">
+<tr text-align="center">
 <td>MEDIANO / MEDIUM</td>
 <td>50%</td>
 </tr>
-<tr align="center">
+<tr text-align="center">
 <td>PEQUEÑO / SMALL</td>
 <td>25%</td>
 </tr>
@@ -38,9 +38,9 @@ costo del envío de una maleta en el trayecto
 </li>
 </ul>
 
-## Despliegue
+## Endpoint
 
-Para el despliegue de este servicio se va a escuchar por el puerto 3004
+Para el consumo de este servicio va a escuchar por el puerto 3004
 
 ### Calculo  del Score
 <table>
@@ -53,12 +53,16 @@ Para el despliegue de este servicio se va a escuchar por el puerto 3004
 <td>/score</td>
 </tr>
 <tr>
-<th>Parametros</th>
+<th>Parámetros</th>
 <td>N/A</td>
 </tr>
 <tr>
 <th>Encabezados</th>
 <td>N/A</td>
+</tr>
+<tr>
+<th>Puerto</th>
+<td>3004</td>
 </tr>
 <tr>
 <th>Cuerpo</th>
@@ -87,7 +91,7 @@ Para el despliegue de este servicio se va a escuchar por el puerto 3004
 <td>/score</td>
 </tr>
 <tr>
-<th>Parametros</th>
+<th>Parámetros</th>
 <td>id_offer: identificador de la oferta</td>
 </tr>
 <tr>
@@ -95,12 +99,16 @@ Para el despliegue de este servicio se va a escuchar por el puerto 3004
 <td>N/A</td>
 </tr>
 <tr>
+<th>Puerto</th>
+<td>3004</td>
+</tr>
+<tr>
 <th>Cuerpo</th>
 <td>N/A</td>
 </tr>
 </table>
 
-## Organizacion
+## Organización
 ```shell
 .
 ├── Dockerfile
@@ -141,4 +149,3 @@ Para el despliegue de este servicio se va a escuchar por el puerto 3004
     └── __init__.py
 
 ```
-g

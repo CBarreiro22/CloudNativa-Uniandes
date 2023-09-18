@@ -10,6 +10,7 @@ team:
       - user: Tobeny
         percentage: 25
 board: https://github.com/orgs/MISW-4301-Desarrollo-Apps-en-la-Nube/projects/110
+url: 34.117.67.117
 user-management:
   folder: users
   port: 3000
@@ -30,3 +31,23 @@ route-management:
   port: 3002
   authors:
     - Tobeny
+rf003-management:
+  folder: RF-003
+  port: 3006
+  authors:
+    - iolivaMISO
+rf004-management:
+  folder: RF-004
+  port: 3007
+  authors:
+    - david-lyon-uniandes
+rf005-management:
+  folder: RF-005
+  port: 3005
+  authors:
+    - Tobeny
+scores-management:
+  folder: scores
+  port: 3004
+  authors:
+    - CBarreiro22
