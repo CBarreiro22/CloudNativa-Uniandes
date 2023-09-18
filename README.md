@@ -299,8 +299,8 @@
 - [Ejecutar Docker Compose](#ejecutar-docker-compose)
 - [Ejecutar Colección de Postman](#ejecutar-colección-de-postman)
 - [Ejecutar evaluador github action workflow](#ejecutar-evaluador-github-action-workflow)
-- [Ejecucion de Kubernet en cloud](#Ejecucion de Kubernet en cloud)
-- [Consumo Postman con el ingress](#Consumo Postman con el ingress)
+- [Ejecucion de Kubernet en cloud](#ejecucion-de-Kubernet-en-cloud)
+- [Consumo Postman con el ingress](#consumo-Postman-con-el-ingress)
 
 ## Pre-requisitos para cada microservicio
 - Python ~3.10
