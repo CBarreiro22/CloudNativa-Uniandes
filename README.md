@@ -1,5 +1,6 @@
 # proyecto-202314  
 
+```bash
 .
 ├── config.yaml
 ├── docker-compose.yml
@@ -279,6 +280,7 @@
         │   └── test_users.py
         ├── conftest.py
         └── __init__.py
+```
 
 
 ## Tabla de contenido
