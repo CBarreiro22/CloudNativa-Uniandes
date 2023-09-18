@@ -1,85 +1,285 @@
 # proyecto-202314  
-    .
-    ├── LICENSE
-    ├── Pipfile
-    ├── Pipfile.lock
-    ├── README.md
+
+.
+├── config.yaml
+├── docker-compose.yml
+├── k8s-autoscale.yml
+├── k8s-base-layer-deployment.yaml
+├── k8s-ingress-deloyment.yaml
+├── k8s-new-services-deployment.yaml
+├── LICENSE
+├── offers
+│   ├── Dockerfile
+│   ├── file.py
+│   ├── __init__.py
+│   ├── Pipfile
+│   ├── Pipfile.lock
+│   ├── __pycache__
+│   │   └── __init__.cpython-310.pyc
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── blueprints
+│   │   │   ├── __init__.py
+│   │   │   ├── offer.py
+│   │   │   └── __pycache__
+│   │   │       ├── __init__.cpython-310.pyc
+│   │   │       └── offer.cpython-310.pyc
+│   │   ├── commands
+│   │   │   ├── base_command.py
+│   │   │   ├── __init__.py
+│   │   │   ├── offersOperations.py
+│   │   │   ├── offers.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── base_command.cpython-310.pyc
+│   │   │   │   ├── __init__.cpython-310.pyc
+│   │   │   │   ├── offers.cpython-310.pyc
+│   │   │   │   ├── offersOperations.cpython-310.pyc
+│   │   │   │   └── userService.cpython-310.pyc
+│   │   │   └── userService.py
+│   │   ├── errors
+│   │   │   ├── errors.py
+│   │   │   ├── __init__.py
+│   │   │   └── __pycache__
+│   │   │       ├── errors.cpython-310.pyc
+│   │   │       └── __init__.cpython-310.pyc
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── model.py
+│   │   │   ├── offer.py
+│   │   │   └── __pycache__
+│   │   │       ├── __init__.cpython-310.pyc
+│   │   │       ├── model.cpython-310.pyc
+│   │   │       └── offer.cpython-310.pyc
+│   │   └── __pycache__
+│   │       ├── __init__.cpython-310.pyc
+│   │       └── main.cpython-310.pyc
+│   └── tests
+│       ├── blueprint
+│       │   ├── test_Offer.py
+│       │   └── test_user_mock_service.py
+│       ├── commands
+│       │   └── __init__.py
+│       ├── conftest.py
+│       └── __init__.py
+├── Pipfile
+├── posts
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── blueprints
+│   │   │   └── operations.py
+│   │   ├── commands
+│   │   │   ├── __init__.py
+│   │   │   └── user_service.py
+│   │   ├── errors
+│   │   │   ├── errors.py
+│   │   │   └── __init__.py
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   └── models
+│   │       ├── __init__.py
+│   │       ├── model.py
+│   │       └── post.py
+│   └── tests
+│       ├── blueprints
+│       │   ├── test_operations.py
+│       │   └── test_user_service.py
+│       ├── conftest.py
+│       └── __init__.py
+├── README.md
+├── requirements.txt
+├── RF-003
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── blueprints
+│   │   │   └── rf003.py
+│   │   ├── commands
+│   │   │   ├── BaseCommand.py
+│   │   │   ├── __init__.py
+│   │   │   ├── PostService.py
+│   │   │   └── RoutesService.py
+│   │   ├── erros
+│   │   │   ├── errors.py
+│   │   │   └── __init__.py
+│   │   ├── __init__.py
+│   │   └── main.py
+│   └── tests
+│       ├── blueprints
+│       │   ├── test_create_route_request.py
+│       │   ├── test_ping.py
+│       │   ├── test_post_service.py
+│       │   ├── test_rf003_post.py
+│       │   ├── test_routes_service.py
+│       │   ├── test_schema_validations.py
+│       │   └── test_validate_dates.py
+│       ├── conftest.py
+│       └── __init__.py
+├── RF-004
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── blueprints
+│   │   │   └── operations.py
+│   │   ├── commands
+│   │   │   ├── __init__.py
+│   │   │   ├── offer_service.py
+│   │   │   ├── post_service.py
+│   │   │   ├── score_service.py
+│   │   │   └── user_service.py
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   └── models
+│   │       ├── __init__.py
+│   │       ├── model.py
+│   │       └── post.py
+│   └── tests
+│       ├── blueprints
+│       │   ├── test_offer_service.py
+│       │   ├── test_operations.py
+│       │   ├── test_post_service.py
+│       │   ├── test_score_service.py
+│       │   └── test_user_service.py
+│       ├── conftest.py
+│       └── __init__.py
+├── RF-005
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── blueprints
+│   │   │   ├── __init__.py
+│   │   │   └── operations.py
+│   │   ├── errors
+│   │   │   ├── errors.py
+│   │   │   └── __init__.py
+│   │   ├── __init__.py
+│   │   └── main.py
+│   └── tests
+│       ├── blueprints
+│       │   └── test_rf005_operations.py
+│       ├── conftest.py
+│       └── __init__.py
+├── routes
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── blueprints
+│   │   │   ├── __init__.py
+│   │   │   ├── operations.py
+│   │   │   └── __pycache__
+│   │   │       ├── __init__.cpython-310.pyc
+│   │   │       └── operations.cpython-310.pyc
+│   │   ├── errors
+│   │   │   ├── errors.py
+│   │   │   ├── __init__.py
+│   │   │   └── __pycache__
+│   │   │       ├── errors.cpython-310.pyc
+│   │   │       └── __init__.cpython-310.pyc
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── model.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-310.pyc
+│   │   │   │   ├── model.cpython-310.pyc
+│   │   │   │   └── route.cpython-310.pyc
+│   │   │   └── route.py
+│   │   └── __pycache__
+│   │       ├── __init__.cpython-310.pyc
+│   │       └── main.cpython-310.pyc
+│   └── tests
+│       ├── blueprints
+│       │   └── test_routes_operations.py
+│       ├── conftest.py
+│       └── __init__.py
+├── scores
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── blueprints
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-310.pyc
+│   │   │   │   ├── scoreOperation.cpython-310.pyc
+│   │   │   │   └── user.cpython-310.pyc
+│   │   │   └── scoreOperation.py
+│   │   ├── errors
+│   │   │   ├── errors.py
+│   │   │   ├── __init__.py
+│   │   │   └── __pycache__
+│   │   │       ├── errors.cpython-310.pyc
+│   │   │       └── __init__.cpython-310.pyc
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── model.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-310.pyc
+│   │   │   │   ├── model.cpython-310.pyc
+│   │   │   │   └── score.cpython-310.pyc
+│   │   │   └── score.py
+│   │   └── __pycache__
+│   │       ├── __init__.cpython-310.pyc
+│   │       └── main.cpython-310.pyc
+│   └── tests
+│       ├── blueprint
+│       │   ├── __init__.py
+│       │   └── test_scores.py
+│       ├── conftest.py
+│       └── __init__.py
+├── secrets.yaml
+└── users
+    ├── Dockerfile
+    ├── file.py
+    ├── __init__.py
+    ├── k8s-service.yml
     ├── __pycache__
-    ├── archivos.txt
-    ├── calculator
-    │   ├── src
+    │   └── __init__.cpython-310.pyc
+    ├── README.md
+    ├── requirements.txt
+    ├── src
+    │   ├── blueprints
     │   │   ├── __init__.py
     │   │   ├── __pycache__
-    │   │   │   ├── __init__.cpython-311.pyc
-    │   │   │   ├── __init__.cpython-39.pyc
-    │   │   │   └── main.cpython-39.pyc
-    │   │   ├── blueprints
-    │   │   │   ├── __pycache__
-    │   │   │   │   └── operations.cpython-39.pyc
-    │   │   │   └── operations.py
-    │   │   ├── commands
-    │   │   │   ├── __init__.py
-    │   │   │   ├── __pycache__
-    │   │   │   │   ├── __init__.cpython-39.pyc
-    │   │   │   │   ├── base_command.cpython-39.pyc
-    │   │   │   │   ├── divide.cpython-39.pyc
-    │   │   │   │   ├── multiply.cpython-39.pyc
-    │   │   │   │   └── sum.cpython-39.pyc
-    │   │   │   ├── base_command.py
-    │   │   │   ├── divide.py
-    │   │   │   ├── multiply.py
-    │   │   │   └── sum.py
-    │   │   ├── errors
-    │   │   │   ├── __init__.py
-    │   │   │   ├── __pycache__
-    │   │   │   │   ├── __init__.cpython-39.pyc
-    │   │   │   │   └── errors.cpython-39.pyc
-    │   │   │   └── errors.py
-    │   │   ├── main.py
-    │   │   └── models
-    │   │       ├── __init__.py
-    │   │       └── model.py
-    │   └── tests
-    │       ├── __init__.py
-    │       ├── blueprints
-    │       │   ├── __pycache__
-    │       │   └── test_operations.py
-    ├── docker-compose.yml
-    ├── offers
-    │   ├── Dockerfile
-    │   ├── Pipfile
-    │   ├── Pipfile.lock
+    │   │   │   ├── __init__.cpython-310.pyc
+    │   │   │   └── user.cpython-310.pyc
+    │   │   └── user.py
+    │   ├── errors
+    │   │   ├── errors.py
+    │   │   ├── __init__.py
+    │   │   └── __pycache__
+    │   │       ├── errors.cpython-310.pyc
+    │   │       └── __init__.cpython-310.pyc
     │   ├── __init__.py
-    │   ├── app.log
-    │   ├── file.py
-    │   ├── requirements.txt
-    │   ├── src
+    │   ├── main.py
+    │   ├── models
     │   │   ├── __init__.py
-    │   │   ├── blueprints
-    │   │   │   ├── __init__.py
-    │   │   │   └── offer.py
-    │   │   ├── commands
-    │   │   │   ├── __init__.py
-    │   │   │   ├── base_command.py
-    │   │   │   ├── offers.py
-    │   │   │   ├── offersOperations.py
-    │   │   │   └── userService.py
-    │   │   ├── errors
-    │   │   │   ├── __init__.py
-    │   │   │   └── errors.py
-    │   │   ├── main.py
-    │   │   └── models
-    │   │       ├── __init__.py
-    │   │       ├── model.py
-    │   │       └── offer.py
-    │   ├── tests
-    │   │   ├── __init__.py
-    │   │   ├── blueprint
-    │   │   │   ├── test_Offer.py
-    │   │   │   └── test_user_mock_service.py
-    │   │   ├── commands
-    │   │   │   └── __init__.py
-    │   │   └── conftest.py
+    │   │   ├── model.py
+    │   │   ├── __pycache__
+    │   │   │   ├── __init__.cpython-310.pyc
+    │   │   │   ├── model.cpython-310.pyc
+    │   │   │   └── user.cpython-310.pyc
+    │   │   └── user.py
+    │   └── __pycache__
+    │       ├── __init__.cpython-310.pyc
+    │       └── main.cpython-310.pyc
+    └── tests
+        ├── blueprint
+        │   └── test_users.py
+        ├── conftest.py
+        └── __init__.py
+
 
 ## Tabla de contenido
 
@@ -97,6 +297,8 @@
 - [Ejecutar Docker Compose](#ejecutar-docker-compose)
 - [Ejecutar Colección de Postman](#ejecutar-colección-de-postman)
 - [Ejecutar evaluador github action workflow](#ejecutar-evaluador-github-action-workflow)
+- [Ejecucion de Kubernet en cloud](#Ejecucion de Kubernet en cloud)
+- [Consumo Postman con el ingress](#Consumo Postman con el ingress)
 
 ## Pre-requisitos para cada microservicio
 - Python ~3.10
@@ -287,6 +489,15 @@ $> FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3003
 
 # Scores
 $> FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3004
+
+# RF-005
+$> FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3005
+
+# RF-003
+$> FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3006
+
+# RF-004
+$> FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3007
 ```
 ### Ejecutar pruebas
 Para ejecutar las pruebas unitarias de los microservicios y establecer el porcentaje mínimo de cobertura del conjunto de pruebas en 70%, ejecuta el siguiente comando:
@@ -347,5 +558,56 @@ Esto iniciará la ejecución del workflow en la rama. Si todo funciona correctam
 
 <img src="https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/proyecto-202314-base/assets/78829363/c6c580b2-80e0-411d-8971-a252312ce5ea" alt="Screenshot" width="800">
 
+## Ejecucion de Kubernet en cloud
 
-Version v1.0.4
+Para el desarrollo de la segunda entrega se realizó lo que fue el despliegue en Cloud implementando kubernet.
+1. Auténtica con google cloud de acuerdo al proyecto
+2. Autoriza a gcloud con el registry
+> gcloud auth configure-docker us-central1-docker.pkg.dev
+
+3. Luego de haberte generado el Cluster con sus respectivas redes y subred procedemos a construir las imagenes con lo siguiente:
+>docker build -t us-central1-docker.pkg.dev/{{ProyectID}}/{{KubernetName}}/{{NombreDelServicio}}:{{Version}} .
+
+Ejemplo:
+>docker build -t us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/score:1.0 .\n
+
+4. Luego de haber construido las imagenes procedemos a subirlas al repositorio de google cloud con el siguiente comando:
+>docker push -t us-central1-docker.pkg.dev/{{proyectID}}/{{ClusterKubernateName}}/{{NomnbreDelMicro}}:{{Version}}
+
+Ejemplo:
+>docker push -t us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/score:1.0
+
+5. Luego de haber subido las imagenes al repositorio de google cloud procedemos a crear los deployments con el siguiente comando:
+
+Despliegue solo los microservicios (user, post, routes, offers)
+>kubectl apply -f k8s-base-layer-deployment.yaml
+
+Despliegue de los microservicios (RF-003, RF-004, RF-005,SCORE)
+> kubectl apply -f k8s-new-layer-service.yaml
+
+Despligue del ingress
+> kubectl apply -f k8s-ingress-deloyment.yaml
+
+## Consumo Postman con el ingress
+
+Se procede abrir el postman que de la entrega 2 mencionadas en este readme tal y como se muestra a continuación y se selecciona variables:
+
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/111206402/6ccc4139-f917-4acb-a8a2-b6390a65258b)
+
+Y se modifica el INGRESS_PATH que en nuestro caso es el 34.117.67.117
+
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/111206402/9c907057-2caa-4480-b9d4-e7629a266d47)
+
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/111206402/314c4279-f6da-423e-80ad-3eb1862a2d3d)
+
+
+Y luego se relaiza las pruebas de la siguiente manera
+
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/111206402/64cd2e07-6fb6-49f3-88a4-494917347a43)
+
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/111206402/aad19010-903a-439f-b8cc-020dbd72b444)
+
+Finalmente, debe aparece algo como esto:
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/111206402/64314851-0114-4e80-b348-9dfdbe90e1ca)
+
+Version v1.0.5
