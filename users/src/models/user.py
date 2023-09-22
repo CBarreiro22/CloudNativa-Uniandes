@@ -15,7 +15,7 @@ class Users(Model):
     password = Column(String(128), nullable=False)
     salt = Column(String(128), nullable=False)
     token = Column(String(128), nullable=True)
-    status = Column(String(128), default="NO_VERIFICADO")
+    status = Column(String(128), default="POR_VERIFICAR")
     expireAt = Column(DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, username, password, salt, email, phone_number=None, dni=None, full_name=None):

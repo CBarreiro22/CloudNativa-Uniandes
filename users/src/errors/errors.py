@@ -14,7 +14,7 @@ class InsufficientDataError(ApiError):
 
 class InvalidCredentialsError(ApiError):
     code = 401
-    description = "Invalid credentials"
+    description = "Credenciales inválidas"
 
 
 class TokenNotHeaderError(ApiError):

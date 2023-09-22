@@ -1,18 +1,20 @@
 import hashlib
+import os
 import uuid
 from datetime import datetime, timedelta
 from operator import or_
 
+import requests
 from flask import jsonify, request, Blueprint
-
 from ..errors.errors import TokenNotHeaderError, InsufficientDataError, \
     UserExistError, UserNotFound, InvalidCredentialsError, InternalServerError
 from ..models.model import db_session, init_db
 from ..models.user import Users
 
+TRUE_NATIVE_PATH = os.environ["TRUE_NATIVE_PATH"]
+
 # Crear el Blueprint para la gestión de usuarios
 users_blueprint = Blueprint('users', __name__)
-
 init_db()
 
 
@@ -38,7 +40,7 @@ def create_user():
     if not user is None:
         raise UserExistError
 
-    nuevo_usuario = Users(
+    new_user = Users(
         username=username,
         password=password,
         salt=password_encriptado,
@@ -48,18 +50,38 @@ def create_user():
         full_name=fullname
     )
     try:
-        user = db_session.add(nuevo_usuario)
+        db_session.add(new_user)
 
         db_session.commit()
 
+        check_user(new_user)
+
         response = {
-            "id": str(nuevo_usuario.id),
-            "createdAt": nuevo_usuario.createdAt.isoformat()
+            "id": str(new_user.id),
+            "createdAt": new_user.createdAt.isoformat()
         }
         return jsonify(response), 201
     except ValueError as e:
-        print(e)
         raise UserExistError
+
+
+def check_user(new_user):
+    data = {
+            "transactionIdentifier": str(uuid.uuid4()),
+            "userIdentifier": str(new_user.id),
+            "userWebhook": "http://192.168.1.58:3000/users/40",
+            "user": {
+                "email": new_user.email,
+                "dni": new_user.dni,
+                "fullName": new_user.full_name,
+                "phone": new_user.phone_number
+            }
+    }
+    headers = {
+        "Authorization": "1234567890"
+    }
+    response = requests.post(f"{TRUE_NATIVE_PATH}/native/verify", json=data, headers=headers)
+    print(response)
 
 
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
@@ -113,19 +135,19 @@ def generate_token():
 
     # Verificar la contraseña del usuario
     if user.password != password:
-        raise UserNotFound("Credenciales inválidas")
+        raise InvalidCredentialsError()
+
+    # Verified Status
+    if user.status == "POR_VERIFICAR":
+        raise UserNotFound("Usuario no ha sido verificado")
 
     # Generar un nuevo UUID como token
     token = str(uuid.uuid4())
 
-    # Calcular la fecha de vencimiento del token (por ejemplo, 1 hora después de la generación)
+    # Calcular la fecha de vencimiento del token
     expire_at = datetime.utcnow() + timedelta(hours=1)
     user.expireAt = expire_at
     user.token = token
-    # if user.token is not None:
-    #    user.status = "VERIFICADO"
-    # else:
-    #    user.status = "POR_VERIFICAR"
     db_session.commit()
 
     response = {
@@ -199,11 +221,9 @@ def webhook_user():
 
     RUV = data.get("RUV")
     userIdentifier = data.get("userIdentifier")
-    createdAt = data.get("createdAt")
-    status = data.get("status")
     score = data.get("score")
     verifyToken = data.get("verifyToken")
-    #user = db_session.query(Users).filter_by(id=userIdentifier).first()
+    user = db_session.query(Users).filter_by(id=userIdentifier).first()
 
     # The message hasn't been changed
     SECRET_TOKEN = "1234567890"
@@ -215,8 +235,9 @@ def webhook_user():
 
     # Verified Score
     if score > 60:
-        status_final = "VERIFICADO"
+        user.status = "VERIFICADO"
     else:
-        status_final = "NO_VERIFICADO"
+        user.status = "NO_VERIFICADO"
+    db_session.commit()
 
-    return jsonify({"status": status_final}), 200
+    return jsonify({"status": user.status}), 200
