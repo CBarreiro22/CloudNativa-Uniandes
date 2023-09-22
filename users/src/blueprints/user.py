@@ -139,7 +139,10 @@ def generate_token():
 
     # Verified Status
     if user.status == "POR_VERIFICAR":
-        raise UserNotFound("Usuario no ha sido verificado")
+        raise InvalidCredentialsError("Usuario no ha sido verificado")
+
+    if user.status == "NO_VERIFICADO":
+        raise InvalidCredentialsError("Usuario no fue verificado, no puede ingresar a la plataforma")
 
     # Generar un nuevo UUID como token
     token = str(uuid.uuid4())
