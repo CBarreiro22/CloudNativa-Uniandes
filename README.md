@@ -130,7 +130,7 @@
 │   │   │   └── operations.py
 │   │   ├── commands
 │   │   │   ├── __init__.py
-│   │   │   ├── offer_service.py
+│   │   │   ├── email_service.py
 │   │   │   ├── post_service.py
 │   │   │   ├── score_service.py
 │   │   │   └── user_service.py
