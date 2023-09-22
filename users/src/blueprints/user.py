@@ -62,7 +62,6 @@ def create_user():
         raise UserExistError
 
 
-
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
 def update_user(user_id):
     user = db_session.query(Users).filter_by(id=user_id).first()
@@ -185,3 +184,39 @@ def reset_database():
     db_session.commit()
 
     return jsonify({"msg": "Todos los datos fueron eliminados"}), 200
+
+
+@users_blueprint.route('/users/40', methods=['PATCH'])
+def webhook_user():
+    # data received from webhook
+    data = request.json
+
+    # verified information
+    required_fields = ["RUV", "userIdentifier", "createdAt", "status", "score", "verifyToken"]
+    for field in required_fields:
+        if field not in data:
+            raise InsufficientDataError(f"El campo {field} no está en los datos")
+
+    RUV = data.get("RUV")
+    userIdentifier = data.get("userIdentifier")
+    createdAt = data.get("createdAt")
+    status = data.get("status")
+    score = data.get("score")
+    verifyToken = data.get("verifyToken")
+    #user = db_session.query(Users).filter_by(id=userIdentifier).first()
+
+    # The message hasn't been changed
+    SECRET_TOKEN = "1234567890"
+    token = f"{SECRET_TOKEN}:{RUV}:{score}"
+    sha_token = hashlib.sha256(token.encode()).hexdigest()
+
+    if sha_token != verifyToken:
+        return jsonify({"error": "El mensaje ha sido alterado"}), 401
+
+    # Verified Score
+    if score > 60:
+        status_final = "VERIFICADO"
+    else:
+        status_final = "NO_VERIFICADO"
+
+    return jsonify({"status": status_final}), 200
