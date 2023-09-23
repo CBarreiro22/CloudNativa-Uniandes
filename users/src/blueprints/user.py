@@ -66,22 +66,21 @@ def create_user():
 
 
 def check_user(new_user):
-    print("ingreso al check")
     data = {
-            "transactionIdentifier": str(uuid.uuid4()),
-            "userIdentifier": str(new_user.id),
-            "userWebhook": "http://192.168.1.32:3000//users/40",
-            "user": {
-                "email": new_user.email,
-                "dni": new_user.dni,
-                "fullName": new_user.full_name,
-                "phone": new_user.phone_number
-            }
+        "transactionIdentifier": str(uuid.uuid4()),
+        "userIdentifier": str(new_user.id),
+        "userWebhook": "http://192.168.1.32:3000//users/40",
+        "user": {
+            "email": new_user.email,
+            "dni": new_user.dni,
+            "fullName": new_user.full_name,
+            "phone": new_user.phone_number
+        }
     }
     headers = {
         "Authorization": "1234567890"
     }
-    request=requests.post(f"{TRUE_NATIVE_PATH}/native/verify", json=data, headers=headers)
+    request = requests.post(f"{TRUE_NATIVE_PATH}/native/verify", json=data, headers=headers)
     print(request)
 
 
@@ -250,4 +249,25 @@ def webhook_user():
         user.status = "NO_VERIFICADO"
     db_session.commit()
 
+    enviarCorreo(user, data)
+
     return jsonify({"status": user.status}), 200
+
+
+def enviarCorreo(user, data):
+    data_enviar = {
+        "email": user.email,
+        "RUV": data.get("RUV"),
+        "username": user.username,
+        "dni": user.dni,
+        "status": user.status,
+        "fullname": user.full_name,
+        "phonenumber": user.phone_number
+    }
+
+    data_enviar = {key: value if value is not None else '' for key, value in data_enviar.items()}
+    request = requests.post("https://us-central1-miso-cloud-native-396713.cloudfunctions.net/funcion-notificar-usuario",json=data_enviar)
+
+    print("Este es el request", request.status_code)
+
+
