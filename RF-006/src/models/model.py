@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from marshmallow import fields, Schema
 from sqlalchemy import Column, DateTime, create_engine, String, Enum
 from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
+from sqlalchemy_utils import UUIDType
 
 loaded = load_dotenv('.env.development')
 engine = create_engine(
@@ -27,47 +28,43 @@ def reset_db():
         db_session.commit()
 
 
-class CardIssuer(enum.Enum):
-    VISA = "VISA"
-    MASTERCARD = "MASTERCARD"
-    AMERICAN_EXPRESS = "AMERICAN_EXPRESS"
-    OTHER = "OTHER"
-
-
-class CreditCard():
+class CreditCard(Base):
     __tablename__ = 'credit_cards'
-    id = Column(String, primary_key=True, default=str(uuid.uuid4()), nullable=False)
+    id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     token = Column(String(256))
     userId = Column(String)
     lastFourDigits = Column(String(4))
     ruv = Column(String)
-    issuer = Column(Enum(CardIssuer))
+    issuer = Column(String)
     status = Column(String, nullable=False)
-    created_At = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_At = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-    email = Column (String)
+    createdAt = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updatedAt = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    email = Column(String)
+    creditCardHash = Column(String)
 
-    def __init__(self, token, userId, last_Four_Digits, ruv, issuer, status, email):
+    def __init__(self, token, userId, lastFourDigits, ruv, issuer, status, email, creditCardHash):
         self.token = token
         self.userId = userId
-        self.last_Four_Digits = last_Four_Digits
+        self.lastFourDigits = lastFourDigits
         self.ruv = ruv
         self.issuer = issuer
         self.status = status
         self.email = email
-class CreateCreditCardSchema (Schema):
-    id  = fields.String ()
-    userId = fields.String()
-    createdAt = fields.String()
+        self.creditCardHash = creditCardHash
 
-class CreditCardSchema (Schema):
+
+class CreateCreditCardSchema(Schema):
     id = fields.String()
     userId = fields.String()
     createdAt = fields.String()
-    token  = fields.String()
-    lastFourDigits = fields.String ()
 
 
-
-
-
+class CreditCardSchema(Schema):
+    id = fields.String()
+    userId = fields.String()
+    createdAt = fields.String()
+    updatedAt = fields.String()
+    status = fields.String()
+    issuer = fields.String()
+    token = fields.String()
+    lastFourDigits = fields.String()

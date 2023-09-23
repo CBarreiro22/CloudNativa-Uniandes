@@ -1,33 +1,35 @@
 import json
 import os
+import uuid
 
 import requests
 
-TOKEN_TRUE_NATIVE = "qwerty"
+TOKEN_TRUE_NATIVE = os.environ["TOKEN_SERVICE"]
 
 
 class TrueNativeService:
 
     @staticmethod
-    def register_card(body_card_creation, transaction_identifier):
+    def register_card(body_card_creation):
+        transaction_identifier = uuid.uuid4()
         headers = {
             'Authorization': TOKEN_TRUE_NATIVE,
             'Content-Type': 'application/json'
         }
         body_request = {
             "card": {
-                "cardNumber": body_card_creation["card_number"],
+                "cardNumber": body_card_creation["cardNumber"],
                 "cvv": body_card_creation["cvv"],
-                "expirationDate": body_card_creation["expiration_date"],
-                "cardHolderName": body_card_creation["card_holder_name"]
+                "expirationDate": body_card_creation["expirationDate"],
+                "cardHolderName": body_card_creation["cardHolderName"]
             },
-            "transactionIdentifier": transaction_identifier
+            "transactionIdentifier": f"{transaction_identifier}"
         }
         updated_body_json = json.dumps(body_request)
         response = requests.post(os.environ["TRUE_NATIVE_PATH"] + '/native/cards', headers=headers,
                                  data=updated_body_json)
         if response.status_code == 201:
-            return response.json(), ""
+            return response.json(), ''
         else:
             return "", response.status_code
 
