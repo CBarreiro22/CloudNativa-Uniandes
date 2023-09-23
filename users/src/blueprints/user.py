@@ -53,7 +53,7 @@ def create_user():
         db_session.add(new_user)
 
         db_session.commit()
-
+        print("funcionb check")
         check_user(new_user)
 
         response = {
@@ -66,10 +66,11 @@ def create_user():
 
 
 def check_user(new_user):
+    print("ingreso al check")
     data = {
             "transactionIdentifier": str(uuid.uuid4()),
             "userIdentifier": str(new_user.id),
-            "userWebhook": "http://192.168.1.58:3000/users/40",
+            "userWebhook": "http://192.168.1.32:3000//users/40",
             "user": {
                 "email": new_user.email,
                 "dni": new_user.dni,
@@ -80,8 +81,8 @@ def check_user(new_user):
     headers = {
         "Authorization": "1234567890"
     }
-    response = requests.post(f"{TRUE_NATIVE_PATH}/native/verify", json=data, headers=headers)
-    print(response)
+    request=requests.post(f"{TRUE_NATIVE_PATH}/native/verify", json=data, headers=headers)
+    print(request)
 
 
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
@@ -141,6 +142,8 @@ def generate_token():
     if user.status == "POR_VERIFICAR":
         raise InvalidCredentialsError("Usuario no ha sido verificado")
 
+    print(user.status)
+
     if user.status == "NO_VERIFICADO":
         raise InvalidCredentialsError("Usuario no fue verificado, no puede ingresar a la plataforma")
 
@@ -176,6 +179,10 @@ def get_user_info():
     user = db_session.query(Users).filter_by(token=token).first()
     if not user or user.expireAt < datetime.utcnow():
         raise InvalidCredentialsError("Invalid or expired token")
+
+    print(user.status)
+    if user.status == "NO_VERIFICADO":
+        raise InvalidCredentialsError("Usuario no fue verificado, no puede ingresar a la plataforma")
 
     response = {
         "id": str(user.id),

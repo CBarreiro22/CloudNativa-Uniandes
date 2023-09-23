@@ -7,4 +7,4 @@ class MissingToken(ApiError):
     description = ""
 class InvalidToken(ApiError):
     code = 401
-    description = ""
+    description = "Parametro invalido"
