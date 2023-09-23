@@ -41,8 +41,9 @@ class CreditCard(Base):
     updatedAt = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     email = Column(String)
     creditCardHash = Column(String)
+    cardHolderName = Column(String)
 
-    def __init__(self, token, userId, lastFourDigits, ruv, issuer, status, email, creditCardHash):
+    def __init__(self, token, userId, lastFourDigits, ruv, issuer, status, email, creditCardHash, cardHolderName):
         self.token = token
         self.userId = userId
         self.lastFourDigits = lastFourDigits
@@ -51,6 +52,7 @@ class CreditCard(Base):
         self.status = status
         self.email = email
         self.creditCardHash = creditCardHash
+        self.cardHolderName = cardHolderName
 
 
 class CreateCreditCardSchema(Schema):

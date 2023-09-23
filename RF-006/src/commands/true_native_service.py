@@ -55,3 +55,15 @@ class TrueNativeService:
             return response.json(), ""
         else:
             return "", response.status_code
+
+    @staticmethod
+    def get_card_status(ruv):
+        headers = {
+            'Authorization': TOKEN_TRUE_NATIVE,
+            'Content-Type': 'application/json'
+        }
+        response = requests.get(os.environ["TRUE_NATIVE_PATH"] + '/native/cards/' + ruv, headers=headers)
+        if response.status_code == 200:
+            return response.json(), ''
+        else:
+            return '', response.status_code

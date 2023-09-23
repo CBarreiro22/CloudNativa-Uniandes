@@ -1,4 +1,5 @@
 import hashlib
+import threading
 from datetime import datetime
 from functools import wraps
 from flask import Blueprint, jsonify
@@ -10,11 +11,14 @@ from jsonschema.validators import validate
 
 from ..commands.true_native_service import TrueNativeService
 from ..commands.user_service import UserService
+from ..polling.polling import polling
 
 operations_blueprint = Blueprint('operations', __name__)
 
 init_db()
-
+polling_thread = threading.Thread(target=polling)
+polling_thread.daemon = True
+polling_thread.start()
 credit_card_schema = {
     "type": "object",
     "properties": {
@@ -104,13 +108,14 @@ def persist_credit_card(credit_card_data, true_native_response):
     email = request.email
     credit_card_number = credit_card_data.get("cardNumber")
     last_four_digit = lastFourDigits(credit_card_data.get('cardNumber'))
+    cardHolderName = credit_card_data.get ("cardHolderName")
     ruv = true_native_response.get('RUV')
     issuer = true_native_response.get('issuer')
     status = "POR_VERIFICAR"
     token = true_native_response.get ('token')
     creditCardHash = to_sha_hash(credit_card_number)
     credit_card = CreditCard(token = token, userId=userId, lastFourDigits = last_four_digit,
-                             ruv=ruv, issuer=issuer, status=status, email=email, creditCardHash = creditCardHash)
+                             ruv=ruv, issuer=issuer, status=status, email=email, creditCardHash = creditCardHash, cardHolderName = cardHolderName)
     db_session.add(credit_card)
     db_session.commit()
     return credit_card
