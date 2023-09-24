@@ -5,7 +5,7 @@ services:
       context: ./users
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3015:3015"
     networks:
       - user_net
       - app_net
@@ -98,6 +98,42 @@ services:
       interval: 2s
       timeout: 5s
       retries: 5
+  credit-cards:
+    build:
+      context: ./RF-006
+      dockerfile: Dockerfile
+    ports:
+      - "3012:3012"
+    environment:
+      DB_NAME: credit_cards
+      DB_HOST: credit_cards_db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      USERS_PATH: "http://users:3015"
+      TOKEN_SERVICE: qwerty
+      TRUE_NATIVE_PATH: http://true_native:4000
+      EMAIL_NOTIFICATION_PATH: https://us-central1-miso-cloud-native-396713.cloudfunctions.net
+      VERSION: 1.0
+    networks:
+      - credit_card_net
+      - app_net
+    depends_on:
+      credit_cards_db:
+        condition: service_healthy
+  credit_cards_db:
+    image: postgres
+    environment:
+      POSTGRES_DB: credit_cards
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - credit_card_net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 2s
+      timeout: 5s
+      retries: 5
   offers:
     build:
       context: ./offers
@@ -164,6 +200,18 @@ services:
       SCORES_PATH: "http://scores:3004"
       VERSION: 1.0
 
+  true_native:
+    image: ghcr.io/misw-4301-desarrollo-apps-en-la-nube/true-native:2.0.0
+    networks:
+      - app_net
+    # Configura cualquier variable de entorno necesaria para este servicio, si es necesario
+    environment:
+      TOKEN_SERVICE: qwerty
+    # Configura los puertos si es necesario
+    ports:
+      - "4000:3000"
+    # Agrega cualquier otra configuración necesaria
+
 networks:
   user_net:
     driver: bridge
@@ -178,4 +226,6 @@ networks:
   rf003_net:
     driver: bridge
   offers_post:
+    driver: bridge
+  credit_card_net:
     driver: bridge

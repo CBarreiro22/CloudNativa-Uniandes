@@ -1,5 +1,4 @@
 import hashlib
-import threading
 from datetime import datetime
 from functools import wraps
 from flask import Blueprint, jsonify
@@ -11,14 +10,12 @@ from jsonschema.validators import validate
 
 from ..commands.true_native_service import TrueNativeService
 from ..commands.user_service import UserService
-from ..polling.polling import polling
 
 operations_blueprint = Blueprint('operations', __name__)
 
+
 init_db()
-polling_thread = threading.Thread(target=polling)
-polling_thread.daemon = True
-polling_thread.start()
+
 credit_card_schema = {
     "type": "object",
     "properties": {

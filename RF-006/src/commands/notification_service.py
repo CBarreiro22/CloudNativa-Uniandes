@@ -7,6 +7,10 @@ import requests
 class NotificationService:
     @staticmethod
     def sent_notication(email, RUV, lastForDigits, status, cardHolderName):
+        headers = {
+            'Accept': '*/*',
+            'Content-Type': 'application/json'
+        }
         body_request = {
             "email": email,
             "RUV": RUV,
@@ -16,8 +20,6 @@ class NotificationService:
         }
         updated_body_json = json.dumps(body_request)
         response = requests.post(os.environ["EMAIL_NOTIFICATION_PATH"] + '/funcion-notificar-tarjeta',
-                                 data=updated_body_json)
-        if response.status_code == 200:
-            return response.json(), ''
-        else:
-            return "", response.status_code
+                                 headers=headers, data=updated_body_json)
+        return response.status_code
+

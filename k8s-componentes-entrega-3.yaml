@@ -1,0 +1,141 @@
+###################################
+# user
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+  labels:
+    app: users
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users
+          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/users:1.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_NAME
+              value: containers
+            - name: DB_HOST
+              value: 192.168.0.3
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: containers_user
+            - name: DB_PASSWORD
+              value: "},u1Y},QT._Sq0fl"
+          # Realizar pull siempre a la imagen
+          imagePullPolicy: Always
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: users-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3000
+    type: HTTP
+    requestPath: /users/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-users
+  annotations:
+    cloud.google.com/backend-config: '{"default": "users-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: users
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 31019
+
+---
+
+###################################
+# credit card RF 006
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: credit-cards
+  labels:
+    app: credit-cards
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: credit-cards
+  template:
+    metadata:
+      labels:
+        app: credit-cards
+    spec:
+      containers:
+        - name: credit-cards
+          image: us-central1-docker.pkg.dev/secure-guru-383402/uniandes-containers-app/credit-cards:1.0
+          ports:
+            - containerPort: 3012
+          env:
+            - name: DB_NAME
+              value: containers
+            - name: DB_HOST
+              value: 192.168.0.3
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: containers_user
+            - name: DB_PASSWORD
+              value: "},u1Y},QT._Sq0fl"
+            - name: TOKEN_SERVICE
+              value: qwerty
+            - name: TRUE_NATIVE_PATH
+              value: http://service-truenative
+            - name: EMAIL_NOTIFICATION_PATH
+              value: https://us-central1-miso-cloud-native-396713.cloudfunctions.net
+            - name: USERS_PATH
+              value: http://servicio-users
+          # Realizar pull siempre a la imagen
+          imagePullPolicy: Always
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: credit-cards-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3012
+    type: HTTP
+    requestPath: /credit-cards/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-credit-cards
+  annotations:
+    cloud.google.com/backend-config: '{"default": "credit-cards-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: credit-cards
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3012
+      nodePort: 31060
+
+---
