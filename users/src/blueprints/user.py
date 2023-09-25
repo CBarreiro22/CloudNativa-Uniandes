@@ -11,10 +11,10 @@ from ..errors.errors import TokenNotHeaderError, InsufficientDataError, \
 from ..models.model import db_session, init_db
 from ..models.user import Users
 
-
 EMAIL_NOTIFICATION_PATH = os.environ["EMAIL_NOTIFICATION_PATH"]
 TRUE_NATIVE_PATH = os.environ["TRUE_NATIVE_PATH"]
 USER_PATH = os.environ["USER_PATH"]
+SECRET_TOKEN = os.environ["TOKEN_SERVICE"]
 
 # Crear el Blueprint para la gestión de usuarios
 users_blueprint = Blueprint('users', __name__)
@@ -72,7 +72,7 @@ def check_user(new_user):
     data = {
         "transactionIdentifier": str(uuid.uuid4()),
         "userIdentifier": str(new_user.id),
-        "userWebhook": f"{USER_PATH}/users/40",
+        "userWebhook": f'{USER_PATH}/users/40',
         "user": {
             "email": new_user.email,
             "dni": new_user.dni,
@@ -80,8 +80,9 @@ def check_user(new_user):
             "phone": new_user.phone_number
         }
     }
+    print(data)
     headers = {
-        "Authorization": "1234567890"
+        "Authorization": f"{SECRET_TOKEN}"
     }
     request = requests.post(f"{TRUE_NATIVE_PATH}/native/verify", json=data, headers=headers)
     print(request)
@@ -224,7 +225,7 @@ def reset_database():
 def webhook_user():
     # data received from webhook
     data = request.json
-
+    print("ingreso webhook")
     # verified information
     required_fields = ["RUV", "userIdentifier", "createdAt", "status", "score", "verifyToken"]
     for field in required_fields:
@@ -238,7 +239,6 @@ def webhook_user():
     user = db_session.query(Users).filter_by(id=userIdentifier).first()
 
     # The message hasn't been changed
-    SECRET_TOKEN = "1234567890"
     token = f"{SECRET_TOKEN}:{RUV}:{score}"
     sha_token = hashlib.sha256(token.encode()).hexdigest()
 
@@ -250,6 +250,8 @@ def webhook_user():
         user.status = "VERIFICADO"
     else:
         user.status = "NO_VERIFICADO"
+
+    print(user.status)
     db_session.commit()
 
     enviarCorreo(user, data)
@@ -269,8 +271,6 @@ def enviarCorreo(user, data):
     }
 
     data_enviar = {key: value if value is not None else '' for key, value in data_enviar.items()}
-    request = requests.post(f'{TRUE_NATIVE_PATH}/funcion-notificar-usuario',json=data_enviar)
+    request = requests.post(f'{TRUE_NATIVE_PATH}/funcion-notificar-usuario', json=data_enviar)
 
     print("Este es el request", request.status_code)
-
-
