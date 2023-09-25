@@ -54,4 +54,3 @@ class Model(Base):
         # Set the creation and update timestamps
         self.createdAt = datetime.utcnow()
         self.updatedAt = datetime.utcnow()
-

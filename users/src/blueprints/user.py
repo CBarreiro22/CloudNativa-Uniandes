@@ -11,7 +11,10 @@ from ..errors.errors import TokenNotHeaderError, InsufficientDataError, \
 from ..models.model import db_session, init_db
 from ..models.user import Users
 
+
+EMAIL_NOTIFICATION_PATH = os.environ["EMAIL_NOTIFICATION_PATH"]
 TRUE_NATIVE_PATH = os.environ["TRUE_NATIVE_PATH"]
+USER_PATH = os.environ["USER_PATH"]
 
 # Crear el Blueprint para la gestión de usuarios
 users_blueprint = Blueprint('users', __name__)
@@ -69,7 +72,7 @@ def check_user(new_user):
     data = {
         "transactionIdentifier": str(uuid.uuid4()),
         "userIdentifier": str(new_user.id),
-        "userWebhook": "http://192.168.1.32:3000//users/40",
+        "userWebhook": f"{USER_PATH}/users/40",
         "user": {
             "email": new_user.email,
             "dni": new_user.dni,
@@ -266,7 +269,7 @@ def enviarCorreo(user, data):
     }
 
     data_enviar = {key: value if value is not None else '' for key, value in data_enviar.items()}
-    request = requests.post("https://us-central1-miso-cloud-native-396713.cloudfunctions.net/funcion-notificar-usuario",json=data_enviar)
+    request = requests.post(f'{TRUE_NATIVE_PATH}/funcion-notificar-usuario',json=data_enviar)
 
     print("Este es el request", request.status_code)
 
