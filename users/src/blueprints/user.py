@@ -271,6 +271,6 @@ def enviarCorreo(user, data):
     }
 
     data_enviar = {key: value if value is not None else '' for key, value in data_enviar.items()}
-    request = requests.post(f'{TRUE_NATIVE_PATH}/funcion-notificar-usuario', json=data_enviar)
+    request = requests.post(f'{EMAIL_NOTIFICATION_PATH}/funcion-notificar-usuario', json=data_enviar)
 
     print("Este es el request", request.status_code)
