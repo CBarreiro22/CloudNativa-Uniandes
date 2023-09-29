@@ -21,7 +21,7 @@ if not ENV is None and ENV == 'test':
     engine = create_engine('sqlite:///:memory:')
     # Load environment variables from the .env.development file
 else:
-    loaded = load_dotenv('./users/.env.development')
+    loaded = load_dotenv('.env.development')
     # Create a SQLAlchemy engine using environment variables for database connection
     engine = create_engine(
         f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}',pool_size=20)
@@ -54,4 +54,3 @@ class Model(Base):
         # Set the creation and update timestamps
         self.createdAt = datetime.utcnow()
         self.updatedAt = datetime.utcnow()
-

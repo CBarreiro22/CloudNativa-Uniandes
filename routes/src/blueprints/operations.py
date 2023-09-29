@@ -108,20 +108,19 @@ def reset_database():
     }), 200
 
 def get_token(value):
-    try:
-        print(value)
-        token= value.headers.get('Authorization') 
-        if token is None:
-            raise MissingToken
-        if not is_valid_token(token):
-            raise InvalidToken
-        return token
-    except ValueError:
-        return None
+    print(value)
+    token= value.headers.get('Authorization')
+    if token is None:
+        raise MissingToken
+    if not is_valid_token(token):
+        raise InvalidToken
+    return token
+
 
 def is_valid_token(value):
     url = f"{USERS_PATH}/users/me"
     respuesta = requests.get(url, headers={"Authorization": value})
+    print(respuesta)
     return respuesta.status_code == 200
 
 def is_valid_uuid(value):

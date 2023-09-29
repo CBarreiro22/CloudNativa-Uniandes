@@ -1,18 +1,23 @@
 import hashlib
+import os
 import uuid
 from datetime import datetime, timedelta
 from operator import or_
 
+import requests
 from flask import jsonify, request, Blueprint
-
 from ..errors.errors import TokenNotHeaderError, InsufficientDataError, \
     UserExistError, UserNotFound, InvalidCredentialsError, InternalServerError
 from ..models.model import db_session, init_db
 from ..models.user import Users
 
+EMAIL_NOTIFICATION_PATH = os.environ["EMAIL_NOTIFICATION_PATH"]
+TRUE_NATIVE_PATH = os.environ["TRUE_NATIVE_PATH"]
+USER_PATH = os.environ["USER_PATH"]
+SECRET_TOKEN = os.environ["TOKEN_SERVICE"]
+
 # Crear el Blueprint para la gestión de usuarios
 users_blueprint = Blueprint('users', __name__)
-
 init_db()
 
 
@@ -38,7 +43,7 @@ def create_user():
     if not user is None:
         raise UserExistError
 
-    nuevo_usuario = Users(
+    new_user = Users(
         username=username,
         password=password,
         salt=password_encriptado,
@@ -48,19 +53,39 @@ def create_user():
         full_name=fullname
     )
     try:
-        user = db_session.add(nuevo_usuario)
+        db_session.add(new_user)
 
         db_session.commit()
+        print("funcionb check")
+        check_user(new_user)
 
         response = {
-            "id": str(nuevo_usuario.id),
-            "createdAt": nuevo_usuario.createdAt.isoformat()
+            "id": str(new_user.id),
+            "createdAt": new_user.createdAt.isoformat()
         }
         return jsonify(response), 201
     except ValueError as e:
-        print(e)
         raise UserExistError
 
+
+def check_user(new_user):
+    data = {
+        "transactionIdentifier": str(uuid.uuid4()),
+        "userIdentifier": str(new_user.id),
+        "userWebhook": f'{USER_PATH}/users/40',
+        "user": {
+            "email": new_user.email,
+            "dni": new_user.dni,
+            "fullName": new_user.full_name,
+            "phone": new_user.phone_number
+        }
+    }
+    print(data)
+    headers = {
+        "Authorization": f"{SECRET_TOKEN}"
+    }
+    request = requests.post(f"{TRUE_NATIVE_PATH}/native/verify", json=data, headers=headers)
+    print(request)
 
 
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
@@ -114,19 +139,24 @@ def generate_token():
 
     # Verificar la contraseña del usuario
     if user.password != password:
-        raise UserNotFound("Credenciales inválidas")
+        raise InvalidCredentialsError()
+
+    # Verified Status
+    if user.status == "POR_VERIFICAR":
+        raise InvalidCredentialsError("Usuario no ha sido verificado")
+
+    print(user.status)
+
+    if user.status == "NO_VERIFICADO":
+        raise InvalidCredentialsError("Usuario no fue verificado, no puede ingresar a la plataforma")
 
     # Generar un nuevo UUID como token
     token = str(uuid.uuid4())
 
-    # Calcular la fecha de vencimiento del token (por ejemplo, 1 hora después de la generación)
+    # Calcular la fecha de vencimiento del token
     expire_at = datetime.utcnow() + timedelta(hours=1)
     user.expireAt = expire_at
     user.token = token
-    # if user.token is not None:
-    #    user.status = "VERIFICADO"
-    # else:
-    #    user.status = "POR_VERIFICAR"
     db_session.commit()
 
     response = {
@@ -152,6 +182,10 @@ def get_user_info():
     user = db_session.query(Users).filter_by(token=token).first()
     if not user or user.expireAt < datetime.utcnow():
         raise InvalidCredentialsError("Invalid or expired token")
+
+    print(user.status)
+    if user.status == "NO_VERIFICADO":
+        raise InvalidCredentialsError("Usuario no fue verificado, no puede ingresar a la plataforma")
 
     response = {
         "id": str(user.id),
@@ -185,3 +219,58 @@ def reset_database():
     db_session.commit()
 
     return jsonify({"msg": "Todos los datos fueron eliminados"}), 200
+
+
+@users_blueprint.route('/users/40', methods=['PATCH'])
+def webhook_user():
+    # data received from webhook
+    data = request.json
+    print("ingreso webhook")
+    # verified information
+    required_fields = ["RUV", "userIdentifier", "createdAt", "status", "score", "verifyToken"]
+    for field in required_fields:
+        if field not in data:
+            raise InsufficientDataError(f"El campo {field} no está en los datos")
+
+    RUV = data.get("RUV")
+    userIdentifier = data.get("userIdentifier")
+    score = data.get("score")
+    verifyToken = data.get("verifyToken")
+    user = db_session.query(Users).filter_by(id=userIdentifier).first()
+
+    # The message hasn't been changed
+    token = f"{SECRET_TOKEN}:{RUV}:{score}"
+    sha_token = hashlib.sha256(token.encode()).hexdigest()
+
+    if sha_token != verifyToken:
+        return jsonify({"error": "El mensaje ha sido alterado"}), 401
+
+    # Verified Score
+    if score > 60:
+        user.status = "VERIFICADO"
+    else:
+        user.status = "NO_VERIFICADO"
+
+    print(user.status)
+    db_session.commit()
+
+    enviarCorreo(user, data)
+
+    return jsonify({"status": user.status}), 200
+
+
+def enviarCorreo(user, data):
+    data_enviar = {
+        "email": user.email,
+        "RUV": data.get("RUV"),
+        "username": user.username,
+        "dni": user.dni,
+        "status": user.status,
+        "fullname": user.full_name,
+        "phonenumber": user.phone_number
+    }
+
+    data_enviar = {key: value if value is not None else '' for key, value in data_enviar.items()}
+    request = requests.post(f'{EMAIL_NOTIFICATION_PATH}/funcion-notificar-usuario', json=data_enviar)
+
+    print("Este es el request", request.status_code)
