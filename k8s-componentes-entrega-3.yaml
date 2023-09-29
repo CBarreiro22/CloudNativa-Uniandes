@@ -39,6 +39,8 @@ spec:
               value: https://us-central1-miso-cloud-native-396713.cloudfunctions.net
             - name: USER_PATH
               value: http://servicio-users
+            - name: TOKEN_SERVICE
+              value: qwerty
           # Realizar pull siempre a la imagen
           imagePullPolicy: Always
 ---
