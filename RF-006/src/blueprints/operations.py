@@ -21,11 +21,9 @@ credit_card_schema = {
     "properties": {
         "cardNumber": {
             "type": "string",
-            "pattern": "^[0-9]{16}$"
         },
         "cvv": {
             "type": "string",
-            "pattern": "^[0-9]{3}$"
         },
         "expirationDate": {
             "type": "string"
