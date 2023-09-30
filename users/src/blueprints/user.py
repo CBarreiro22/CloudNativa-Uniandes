@@ -56,7 +56,7 @@ def create_user():
         db_session.add(new_user)
 
         db_session.commit()
-        print("funcionb check")
+
         check_user(new_user)
 
         response = {
@@ -80,12 +80,12 @@ def check_user(new_user):
             "phone": new_user.phone_number
         }
     }
-    print(data)
+
     headers = {
         "Authorization": f"{SECRET_TOKEN}"
     }
     request = requests.post(f"{TRUE_NATIVE_PATH}/native/verify", json=data, headers=headers)
-    print(request)
+
 
 
 @users_blueprint.route('/users/<string:user_id>', methods=['PATCH'])
@@ -145,7 +145,7 @@ def generate_token():
     if user.status == "POR_VERIFICAR":
         raise InvalidCredentialsError("Usuario no ha sido verificado")
 
-    print(user.status)
+
 
     if user.status == "NO_VERIFICADO":
         raise InvalidCredentialsError("Usuario no fue verificado, no puede ingresar a la plataforma")
@@ -183,7 +183,7 @@ def get_user_info():
     if not user or user.expireAt < datetime.utcnow():
         raise InvalidCredentialsError("Invalid or expired token")
 
-    print(user.status)
+
     if user.status == "NO_VERIFICADO":
         raise InvalidCredentialsError("Usuario no fue verificado, no puede ingresar a la plataforma")
 
@@ -225,7 +225,6 @@ def reset_database():
 def webhook_user():
     # data received from webhook
     data = request.json
-    print("ingreso webhook")
     # verified information
     required_fields = ["RUV", "userIdentifier", "createdAt", "status", "score", "verifyToken"]
     for field in required_fields:
@@ -251,7 +250,7 @@ def webhook_user():
     else:
         user.status = "NO_VERIFICADO"
 
-    print(user.status)
+
     db_session.commit()
 
     enviarCorreo(user, data)
@@ -272,5 +271,3 @@ def enviarCorreo(user, data):
 
     data_enviar = {key: value if value is not None else '' for key, value in data_enviar.items()}
     request = requests.post(f'{EMAIL_NOTIFICATION_PATH}/funcion-notificar-usuario', json=data_enviar)
-
-    print("Este es el request", request.status_code)
