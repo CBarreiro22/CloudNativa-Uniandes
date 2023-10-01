@@ -684,4 +684,16 @@ Y luego se relaiza las pruebas de la siguiente manera
 Finalmente, debe aparece algo como esto:
 ![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/111206402/64314851-0114-4e80-b348-9dfdbe90e1ca)
 
+Entrega 3
+
+Servicios:
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/94886747/76b015e7-9c1a-4633-83c6-de69c9e001c3)
+
+Ingress:
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/94886747/a1048aff-d446-4df6-a1e1-fcabca340327)
+
+Evidencia de pruebas de entrega 3:
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/94886747/1d24bdd1-5935-450d-af89-6313f8297b3d)
+
+
 Version v1.0.5
