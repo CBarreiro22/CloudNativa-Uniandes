@@ -618,6 +618,9 @@ Esto iniciará la ejecución del workflow en la rama. Si todo funciona correctam
 
 <img src="https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/proyecto-202314-base/assets/78829363/c6c580b2-80e0-411d-8971-a252312ce5ea" alt="Screenshot" width="800">
 
+Evidencia de evaluador Entrega 3:
+<img src="https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/94886747/e4e7cb26-37fd-42e0-a152-a3c3ceaa4a3a" alt="Screenshot" width="800">
+
 ## Ejecucion de Kubernet en cloud
 
 Para el desarrollo de la segunda entrega se realizó lo que fue el despliegue en Cloud implementando kubernet.
@@ -647,6 +650,17 @@ Despliegue de los microservicios (RF-003, RF-004, RF-005,SCORE)
 
 Despligue del ingress
 > kubectl apply -f k8s-ingress-deloyment.yaml
+
+Para la entrega 3
+1. Desplegar el microservicio True-Native
+> kubectl apply -f k8s-true-native-deployment.yaml
+
+> kubectl apply -f k8s-ingress-truenative.yaml
+
+2. Posteriormente los microservicios (RF-006, Users, Routes)
+> kubectl apply -f k8s-componentes-entrega-3.yaml
+
+> kubectl apply -f k8s-ingress-entrega-3.yaml
 
 ## Consumo Postman con el ingress
 
