@@ -30,7 +30,7 @@ def create_user():
     password = data.get("password")
     email = data.get("email")
     dni = data.get("dni")
-    fullname = data.get("fullname")
+    fullname = data.get("fullName")
     phoneNumber = data.get("phoneNumber")
 
     if not (username and password and email):
