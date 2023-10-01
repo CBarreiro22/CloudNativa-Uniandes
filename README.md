@@ -6,9 +6,27 @@
 ├── docker-compose.yml
 ├── k8s-autoscale.yml
 ├── k8s-base-layer-deployment.yaml
+├── k8s-componentes-entrega-3.yaml
 ├── k8s-ingress-deloyment.yaml
+├── k8s-ingress-entrega-3.yaml
+├── k8s-ingress-truenative.yaml
 ├── k8s-new-services-deployment.yaml
+├── k8s-true-native-deployment.yaml
 ├── LICENSE
+├── Notifications
+│   ├── TARJETA
+│       ├── mail_controller.py
+│       ├── main.py
+│       ├── notificacion_tarjeta.py
+│       ├── requirements.txt
+│       └── template_tarjeta.html
+│   ├── USUARIO
+│       ├── mail_controller.py
+│       ├── main.py
+│       ├── notificacion_usuario.py
+│       ├── requirements.txt
+│       └── template_usuario.html
+│   └── Pipfile
 ├── offers
 │   ├── Dockerfile
 │   ├── file.py
@@ -165,6 +183,43 @@
 │   └── tests
 │       ├── blueprints
 │       │   └── test_rf005_operations.py
+│       ├── conftest.py
+│       └── __init__.py
+├── RF-006
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── blueprints
+│   │   │   └── operations.py
+│   │   ├── commands
+│   │   │   ├── BaseCommand.py
+│   │   │   ├── __init__.py
+│   │   │   ├── email_service.py
+│   │   │   ├── notification_service.py
+│   │   │   ├── true_native_service.py
+│   │   │   └── user_service.py
+│   │   ├── erros
+│   │   │   ├── errors.py
+│   │   │   └── __init__.py
+│   │   └── models
+│   │       ├── __init__.py
+│   │       ├── model.py
+│   │       └── post.py
+│   │   └── polling
+│   │       ├── __init__.pyy
+│   │       └── polling.py
+│   │   ├── __init__.py
+│   │   └── main.py
+│   └── tests
+│       ├── blueprints
+│       │   ├── test_create_route_request.py
+│       │   ├── test_ping.py
+│       │   ├── test_post_service.py
+│       │   ├── test_rf003_post.py
+│       │   ├── test_routes_service.py
+│       │   ├── test_schema_validations.py
+│       │   └── test_validate_dates.py
 │       ├── conftest.py
 │       └── __init__.py
 ├── routes
@@ -500,6 +555,9 @@ $> FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3006
 
 # RF-004
 $> FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3007
+
+# RF-006
+$> FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3000
 ```
 ### Ejecutar pruebas
 Para ejecutar las pruebas unitarias de los microservicios y establecer el porcentaje mínimo de cobertura del conjunto de pruebas en 70%, ejecuta el siguiente comando:
@@ -532,7 +590,7 @@ Para probar los servicios API expuestos por cada microservicio, hemos proporcion
 Lista de colecciones de Postman para cada entrega del proyecto:
 - Entrega 1: https://raw.githubusercontent.com/MISW-4301-Desarrollo-Apps-en-la-Nube/monitor-202314/main/entrega1/entrega1.json
 - Entrega 2: https://raw.githubusercontent.com/MISW-4301-Desarrollo-Apps-en-la-Nube/monitor-202314/main/entrega2/entrega2_verify_new_logic.json
-- Entrega 3: Para esta entrega no tenemos un workflow evaluador, por lo que no se proporciona ninguna colección de Postman.
+- Entrega 3: https://raw.githubusercontent.com/MISW-4301-Desarrollo-Apps-en-la-Nube/monitor-202314/main/entrega3/entrega3.json
 
 Después de descargar la colección que deseas usar, impórtala en Postman utilizando el botón Import en la sección superior izquierda.
 
@@ -559,6 +617,9 @@ Luego, encontrarás en la sección izquierda una lista de todos los flujos de tr
 Esto iniciará la ejecución del workflow en la rama. Si todo funciona correctamente y la entrega es correcta, verás que todas las comprobaciones aparecen como aprobadas (passed).
 
 <img src="https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/proyecto-202314-base/assets/78829363/c6c580b2-80e0-411d-8971-a252312ce5ea" alt="Screenshot" width="800">
+
+Evidencia de evaluador Entrega 3:
+<img src="https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/94886747/e4e7cb26-37fd-42e0-a152-a3c3ceaa4a3a" alt="Screenshot" width="800">
 
 ## Ejecucion de Kubernet en cloud
 
@@ -590,6 +651,17 @@ Despliegue de los microservicios (RF-003, RF-004, RF-005,SCORE)
 Despligue del ingress
 > kubectl apply -f k8s-ingress-deloyment.yaml
 
+Para la entrega 3
+1. Desplegar el microservicio True-Native
+> kubectl apply -f k8s-true-native-deployment.yaml
+
+> kubectl apply -f k8s-ingress-truenative.yaml
+
+2. Posteriormente los microservicios (RF-006, Users, Routes)
+> kubectl apply -f k8s-componentes-entrega-3.yaml
+
+> kubectl apply -f k8s-ingress-entrega-3.yaml
+
 ## Consumo Postman con el ingress
 
 Se procede abrir el postman que de la entrega 2 mencionadas en este readme tal y como se muestra a continuación y se selecciona variables:
@@ -611,5 +683,17 @@ Y luego se relaiza las pruebas de la siguiente manera
 
 Finalmente, debe aparece algo como esto:
 ![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/111206402/64314851-0114-4e80-b348-9dfdbe90e1ca)
+
+Entrega 3
+
+Servicios:
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/94886747/76b015e7-9c1a-4633-83c6-de69c9e001c3)
+
+Ingress:
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/94886747/a1048aff-d446-4df6-a1e1-fcabca340327)
+
+Evidencia de pruebas de entrega 3:
+![image](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202314-proyecto-grupo11/assets/94886747/1d24bdd1-5935-450d-af89-6313f8297b3d)
+
 
 Version v1.0.5
