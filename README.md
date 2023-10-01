@@ -6,9 +6,27 @@
 ├── docker-compose.yml
 ├── k8s-autoscale.yml
 ├── k8s-base-layer-deployment.yaml
+├── k8s-componentes-entrega-3.yaml
 ├── k8s-ingress-deloyment.yaml
+├── k8s-ingress-entrega-3.yaml
+├── k8s-ingress-truenative.yaml
 ├── k8s-new-services-deployment.yaml
+├── k8s-true-native-deployment.yaml
 ├── LICENSE
+├── Notifications
+│   ├── TARJETA
+│       ├── mail_controller.py
+│       ├── main.py
+│       ├── notificacion_tarjeta.py
+│       ├── requirements.txt
+│       └── template_tarjeta.html
+│   ├── USUARIO
+│       ├── mail_controller.py
+│       ├── main.py
+│       ├── notificacion_usuario.py
+│       ├── requirements.txt
+│       └── template_usuario.html
+│   └── Pipfile
 ├── offers
 │   ├── Dockerfile
 │   ├── file.py
@@ -165,6 +183,43 @@
 │   └── tests
 │       ├── blueprints
 │       │   └── test_rf005_operations.py
+│       ├── conftest.py
+│       └── __init__.py
+├── RF-006
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── blueprints
+│   │   │   └── operations.py
+│   │   ├── commands
+│   │   │   ├── BaseCommand.py
+│   │   │   ├── __init__.py
+│   │   │   ├── email_service.py
+│   │   │   ├── notification_service.py
+│   │   │   ├── true_native_service.py
+│   │   │   └── user_service.py
+│   │   ├── erros
+│   │   │   ├── errors.py
+│   │   │   └── __init__.py
+│   │   └── models
+│   │       ├── __init__.py
+│   │       ├── model.py
+│   │       └── post.py
+│   │   └── polling
+│   │       ├── __init__.pyy
+│   │       └── polling.py
+│   │   ├── __init__.py
+│   │   └── main.py
+│   └── tests
+│       ├── blueprints
+│       │   ├── test_create_route_request.py
+│       │   ├── test_ping.py
+│       │   ├── test_post_service.py
+│       │   ├── test_rf003_post.py
+│       │   ├── test_routes_service.py
+│       │   ├── test_schema_validations.py
+│       │   └── test_validate_dates.py
 │       ├── conftest.py
 │       └── __init__.py
 ├── routes
@@ -500,6 +555,9 @@ $> FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3006
 
 # RF-004
 $> FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3007
+
+# RF-006
+$> FLASK_APP=./src/main.py flask run -h 0.0.0.0 -p 3000
 ```
 ### Ejecutar pruebas
 Para ejecutar las pruebas unitarias de los microservicios y establecer el porcentaje mínimo de cobertura del conjunto de pruebas en 70%, ejecuta el siguiente comando:
@@ -532,7 +590,7 @@ Para probar los servicios API expuestos por cada microservicio, hemos proporcion
 Lista de colecciones de Postman para cada entrega del proyecto:
 - Entrega 1: https://raw.githubusercontent.com/MISW-4301-Desarrollo-Apps-en-la-Nube/monitor-202314/main/entrega1/entrega1.json
 - Entrega 2: https://raw.githubusercontent.com/MISW-4301-Desarrollo-Apps-en-la-Nube/monitor-202314/main/entrega2/entrega2_verify_new_logic.json
-- Entrega 3: Para esta entrega no tenemos un workflow evaluador, por lo que no se proporciona ninguna colección de Postman.
+- Entrega 3: https://raw.githubusercontent.com/MISW-4301-Desarrollo-Apps-en-la-Nube/monitor-202314/main/entrega3/entrega3.json
 
 Después de descargar la colección que deseas usar, impórtala en Postman utilizando el botón Import en la sección superior izquierda.
 
