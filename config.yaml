@@ -10,7 +10,7 @@ team:
       - user: Tobeny
         percentage: 25
 board: https://github.com/orgs/MISW-4301-Desarrollo-Apps-en-la-Nube/projects/110
-url: 34.102.178.71
+url: 35.244.141.40
 user-management:
   folder: users
   port: 3000
